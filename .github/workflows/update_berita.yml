@@ -4,14 +4,13 @@ on:
   schedule:
     # Berjalan otomatis setiap jam 08:00 WITA (00:00 UTC)
     - cron: '0 0 * * *'
-  # Memungkinkan kita memicu robot ini secara manual pakai tombol
   workflow_dispatch:
 
 jobs:
   update-news:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Wajib agar robot diizinkan push artikel ke repo
+      contents: write
 
     steps:
       - name: 1. Buka Repository
@@ -22,7 +21,7 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: 3. Install Alat Bantu (Requests & Feedparser)
+      - name: 3. Install Alat Bantu
         run: |
           python -m pip install --upgrade pip
           pip install requests feedparser
@@ -39,3 +38,18 @@ jobs:
           git add .
           git commit -m "Update Otomatis: Artikel AI Baru" || echo "Tidak ada berita baru hari ini"
           git push
+
+      - name: 6. Kirim Laporan ke Telegram
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          if [ "$STATUS" == "success" ]; then
+            MESSAGE="✅ *Laporan Jurnalis IDI*\n\nBerita hari ini berhasil dicari, ditulis AI, dan sukses tayang di website! 🚀"
+          else
+            MESSAGE="❌ *Laporan Jurnalis IDI*\n\nGawat, robot gagal menjalankan tugas pagi ini. Cek GitHub ya!"
+          fi
+          
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+          -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+          -d "text=$MESSAGE" \
+          -d "parse_mode=Markdown"
