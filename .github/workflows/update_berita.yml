@@ -2,7 +2,6 @@ name: Robot Pencari Berita Otomatis
 
 on:
   schedule:
-    # Berjalan otomatis setiap jam 08:00 WITA (00:00 UTC)
     - cron: '0 0 * * *'
   workflow_dispatch:
 
@@ -42,14 +41,9 @@ jobs:
       - name: 6. Kirim Laporan ke Telegram
         if: always()
         run: |
-          STATUS="${{ job.status }}"
-          if [ "$STATUS" == "success" ]; then
-            MESSAGE="✅ *Laporan Jurnalis IDI*\n\nBerita hari ini berhasil dicari, ditulis AI, dan sukses tayang di website! 🚀"
+          if [ "${{ job.status }}" == "success" ]; then
+            MSG="✅ Laporan Jurnalis IDI: Berita hari ini berhasil dicari, ditulis AI, dan sukses tayang di website! 🚀"
           else
-            MESSAGE="❌ *Laporan Jurnalis IDI*\n\nGawat, robot gagal menjalankan tugas pagi ini. Cek GitHub ya!"
+            MSG="❌ Laporan Jurnalis IDI: Gawat, robot gagal menjalankan tugas pagi ini. Cek GitHub ya!"
           fi
-          
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-          -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
-          -d "text=$MESSAGE" \
-          -d "parse_mode=Markdown"
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" -d "text=$MSG"
