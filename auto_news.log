@@ -14,3 +14,5 @@
 2026-08-20 06:01:09,168 - ERROR - Silakan edit file auto_news.py dan isi variabel DEEPSEEK_API_KEY dan HERMES_API_KEY
 2026-08-21 03:31:27,166 - ERROR - ❌ API Keys belum dikonfigurasi: DeepSeek API Key, Hermes API Key
 2026-08-21 03:31:27,166 - ERROR - Silakan edit file auto_news.py dan isi variabel DEEPSEEK_API_KEY dan HERMES_API_KEY
+2026-08-22 03:09:50,729 - ERROR - ❌ API Keys belum dikonfigurasi: DeepSeek API Key, Hermes API Key
+2026-08-22 03:09:50,729 - ERROR - Silakan edit file auto_news.py dan isi variabel DEEPSEEK_API_KEY dan HERMES_API_KEY
