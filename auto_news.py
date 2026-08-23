@@ -26,30 +26,22 @@ def kirim_pesan_telegram(pesan):
 
 def cari_berita_kesehatan():
     print("Mencari berita terbaru...")
-    # Topeng Penyamaran agar tidak diblokir website
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
     
-    # Target 1: RSS Kemenkes
-    url_feed = "https://sehatnegeriku.kemkes.go.id/feed/"
+    # Kita langsung tembak Antara News Kesehatan yang servernya kuat dan ramah robot
+    url_feed = "https://www.antaranews.com/rss/kesehatan.xml"
     
     try:
         response = requests.get(url_feed, headers=headers, timeout=10)
         feed = feedparser.parse(response.content)
-        
-        # Jika Kemenkes gagal/kosong, pindah ke Target 2: Antara News Kesehatan
-        if not feed.entries:
-            print("Kemenkes kosong/diblokir, mencoba Antara News Kesehatan...")
-            url_feed = "https://www.antaranews.com/rss/kesehatan.xml"
-            response = requests.get(url_feed, headers=headers, timeout=10)
-            feed = feedparser.parse(response.content)
 
         if not feed.entries:
-            return "Maaf Bos, saya sudah mencoba menyamar tapi tidak menemukan berita hari ini. 😔"
+            return "Maaf Bos, sumber berita sedang kosong hari ini. 😔"
         
         pesan = "<b>Laporan Jurnalis Robot! 🤖📰</b>\n"
-        pesan += "Berikut 3 berita kesehatan terbaru hari ini:\n\n"
+        pesan += "Berikut 3 berita kesehatan terbaru hari ini (via Antara News):\n\n"
         
         for i in range(min(3, len(feed.entries))):
             judul = feed.entries[i].title
@@ -60,7 +52,7 @@ def cari_berita_kesehatan():
         return pesan
         
     except Exception as e:
-        return f"Waduh Bos, mesin scrapernya error: {e}"
+        return f"Waduh Bos, mesin scrapernya masih error: {e}"
 
 if __name__ == "__main__":
     draft_berita = cari_berita_kesehatan()
