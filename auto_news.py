@@ -2,6 +2,7 @@ import os
 import sys
 import requests
 import feedparser
+import urllib.parse
 
 print("Mempersiapkan Robot Redaksi IDI Denpasar...")
 
@@ -14,7 +15,7 @@ if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
 
 def kirim_pesan_telegram(pesan):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = {'chat_id': TELEGRAM_CHAT_ID, 'text': pesan, 'parse_mode': 'HTML'}
+    payload = {'chat_id': TELEGRAM_CHAT_ID, 'text': pesan, 'parse_mode': 'HTML', 'disable_web_page_preview': True}
     try:
         response = requests.post(url, data=payload)
         if response.status_code == 200:
@@ -25,23 +26,21 @@ def kirim_pesan_telegram(pesan):
         print(f"Gagal kirim pesan: {e}")
 
 def cari_berita_kesehatan():
-    print("Mencari berita terbaru...")
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
+    print("Mencari berita dari Google News...")
     
-    # Kita langsung tembak Antara News Kesehatan yang servernya kuat dan ramah robot
-    url_feed = "https://www.antaranews.com/rss/kesehatan.xml"
+    # Mencari berita spesifik tentang "Kesehatan Indonesia" di Google News
+    query = urllib.parse.quote("Kesehatan Indonesia")
+    url_feed = f"https://news.google.com/rss/search?q={query}&hl=id&gl=ID&ceid=ID:id"
     
     try:
-        response = requests.get(url_feed, headers=headers, timeout=10)
-        feed = feedparser.parse(response.content)
+        # Google tidak memblokir akses, jadi ini sangat aman
+        feed = feedparser.parse(url_feed)
 
         if not feed.entries:
-            return "Maaf Bos, sumber berita sedang kosong hari ini. 😔"
+            return "Maaf Bos, sumber berita Google sedang gangguan. 😔"
         
         pesan = "<b>Laporan Jurnalis Robot! 🤖📰</b>\n"
-        pesan += "Berikut 3 berita kesehatan terbaru hari ini (via Antara News):\n\n"
+        pesan += "Berikut 3 berita kesehatan terhangat (via Google News):\n\n"
         
         for i in range(min(3, len(feed.entries))):
             judul = feed.entries[i].title
@@ -52,7 +51,7 @@ def cari_berita_kesehatan():
         return pesan
         
     except Exception as e:
-        return f"Waduh Bos, mesin scrapernya masih error: {e}"
+        return f"Waduh Bos, mesin scrapernya error: {e}"
 
 if __name__ == "__main__":
     draft_berita = cari_berita_kesehatan()
