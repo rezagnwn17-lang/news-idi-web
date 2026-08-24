@@ -1,56 +1,61 @@
 import os
-import sys
-import requests
+import telebot
 import feedparser
 import urllib.parse
-from datetime import datetime
 
-print("Mempersiapkan Redaktur AI IDI Denpasar...")
+print("Menyalakan Mesin Asisten Redaksi 24 Jam...")
 
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
-GITHUB_TOKEN = os.environ.get("GH_PAT") or os.environ.get("GITHUB_TOKEN") # Mengambil token github untuk commit otomatis
+# Mengambil Kunci Token
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
-if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-    print("Error: Kunci rahasia Telegram tidak ditemukan!")
-    sys.exit(1)
+if not BOT_TOKEN:
+    print("Error: Kunci Token Telegram tidak ditemukan!")
+    exit()
 
-def kirim_pesan_telegram(pesan):
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = {'chat_id': TELEGRAM_CHAT_ID, 'text': pesan, 'parse_mode': 'HTML', 'disable_web_page_preview': True}
-    try:
-        response = requests.post(url, data=payload)
-        if response.status_code == 200:
-            print("Status: Berhasil dikirim ke Telegram!")
-        else:
-            print(f"Error dari Telegram: {response.text}")
-    except Exception as e:
-        print(f"Gagal kirim pesan: {e}")
+# Inisialisasi Bot Pendengar
+bot = telebot.TeleBot(BOT_TOKEN)
 
-def ambil_dan_kirim_berita():
-    print("Mencari berita terbaru dari Google News...")
+# Respon saat Bos ketik /start
+@bot.message_handler(commands=['start', 'help'])
+def sambutan(message):
+    teks = "Halo Bos! 🤖 Saya sekarang sudah punya telinga dan *online 24 jam*!\n\n"
+    teks += "Silakan perintahkan saya:\n"
+    teks += "👉 /cari - Untuk menyedot berita kesehatan terhangat (Google/CNN/dll)\n"
+    bot.reply_to(message, teks)
+
+# Respon saat Bos ketik /cari
+@bot.message_handler(commands=['cari'])
+def cari_berita(message):
+    bot.reply_to(message, "🔍 Siap Bos! Memulai pencarian berita kesehatan terpercaya... Mohon tunggu sebentar ⏳")
+    
+    # Mencari berita kesehatan spesifik
     query = urllib.parse.quote("Kesehatan Indonesia")
     url_feed = f"https://news.google.com/rss/search?q={query}&hl=id&gl=ID&ceid=ID:id"
     
     try:
         feed = feedparser.parse(url_feed)
         if not feed.entries:
-            return "Maaf Bos, berita sedang kosong."
-        
-        pesan = "<b>Laporan Redaktur AI! 🤖📰</b>\n"
-        pesan += "Pilih berita yang ingin otomatis dipublish ke web dengan membalas pesan ini atau menjalankan perintah selanjutnya:\n\n"
-        
-        # Simpan judul & link sementara (bisa dikembangkan dengan database/file log)
+            bot.reply_to(message, "Maaf Bos, saya tidak menemukan berita terbaru.")
+            return
+
+        pesan = "<b>Laporan Hasil Pencarian! 🤖📰</b>\n\n"
         for i in range(min(3, len(feed.entries))):
             judul = feed.entries[i].title
             link = feed.entries[i].link
-            pesan += f"<b>[{i+1}] {judul}</b>\n🔗 {link}\n\n"
+            pesan += f"<b>[{i+1}] {judul}</b>\n🔗 <a href='{link}'>Baca di sini</a>\n\n"
             
-        pesan += "<i>(Robot siap mempublish artikel otomatis ke news.ididenpasar.org!)</i>"
-        return pesan
+        pesan += "<i>(Ketik /publish 1 untuk menayangkan berita nomor 1 secara otomatis ke website!)</i>"
+        
+        bot.reply_to(message, pesan, parse_mode='HTML', disable_web_page_preview=True)
     except Exception as e:
-        return f"Error mengambil berita: {e}"
+        bot.reply_to(message, f"Aduh Bos, mesin error: {e}")
 
-if __name__ == "__main__":
-    hasil = ambil_dan_kirim_berita()
-    kirim_pesan_telegram(hasil)
+# Respon saat Bos ketik /publish
+@bot.message_handler(commands=['publish'])
+def publish_berita(message):
+    # Nanti logika publish HTML ke GitHub kita taruh di sini
+    bot.reply_to(message, "🚀 Siap Bos! Fitur auto-publish HTML sedang dipasang di tahap selanjutnya. Segera hadir!")
+
+# Menjaga telinga bot tetap terbuka 24/7
+print("Bot siap mendengarkan perintah Bos...")
+bot.infinity_polling()
