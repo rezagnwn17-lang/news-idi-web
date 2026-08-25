@@ -26,7 +26,6 @@ threading.Thread(target=run_dummy_server, daemon=True).start()
 
 print("Menyalakan Mesin Asisten Redaksi 24 Jam...")
 
-# MENGAMBIL DATA DARI ENVIRONMENT VARIABLES RAILWAY
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
 GITHUB_REPO = os.environ.get('GITHUB_REPO', 'rezagnwn17-lang/news-idi-web')
@@ -36,8 +35,6 @@ if not BOT_TOKEN:
     exit()
 
 bot = telebot.TeleBot(BOT_TOKEN)
-
-# Penyimpanan sementara berita terakhir yang dicari
 latest_entries = []
 
 @bot.message_handler(commands=['start', 'help'])
@@ -45,7 +42,7 @@ def sambutan(message):
     teks = "Halo Bos! 🤖 Asisten Redaksi IDI Denpasar siap bertugas!\n\n"
     teks += "Perintah yang tersedia:\n"
     teks += "👉 /cari - Cari berita kesehatan terbaru\n"
-    teks += "👉 /publish [nomor] - Auto-publish berita ke website\n"
+    teks += "👉 /publish [nomor] - Auto-publish berita & update index web\n"
     bot.reply_to(message, teks)
 
 @bot.message_handler(commands=['cari'])
@@ -91,17 +88,15 @@ def publish_berita(message):
         link_sumber = entry.link
         tanggal = datetime.now().strftime("%Y-%m-%d")
         
-        # Nama file HTML unik
         file_name = f"berita-{int(datetime.now().timestamp())}.html"
         
-        # Template HTML Cantik untuk Website
+        # Template HTML Artikel Berita
         html_content = f"""<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{judul} - IDI Denpasar News</title>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f4f4f9;">
     <div style="max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -112,7 +107,7 @@ def publish_berita(message):
         <br>
         <a href="{link_sumber}" target="_blank" style="background: #004b87; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Baca Artikel Selengkapnya di Sumber Asli</a>
         <br><br><hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-        <p style="font-size: 12px; color: #886;"><a href="index.html">← Kembali ke Beranda Berita IDI Denpasar</a></p>
+        <p style="font-size: 12px;"><a href="index.html">← Kembali ke Beranda Berita IDI Denpasar</a></p>
     </div>
 </body>
 </html>"""
@@ -121,25 +116,77 @@ def publish_berita(message):
             bot.reply_to(message, "❌ Gagal: GITHUB_TOKEN belum disetel di Railway Variables!")
             return
 
-        # Mengirim file HTML otomatis ke GitHub Repository via API
-        encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
-        api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{file_name}"
-        
         headers = {
             "Authorization": f"Bearer {GITHUB_TOKEN}",
             "Accept": "application/vnd.github+json"
         }
-        data = {
-            "message": f"Auto-publish via Telegram Bot: {judul}",
+
+        # 1. Upload File Berita HTML Baru ke GitHub
+        encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
+        api_url_file = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{file_name}"
+        data_file = {
+            "message": f"Auto-publish Berita: {judul}",
             "content": encoded_content
         }
+        res_file = requests.put(api_url_file, json=data_file, headers=headers)
+
+        if res_file.status_code not in [201, 200]:
+            bot.reply_to(message, f"❌ Gagal upload file berita ke GitHub.")
+            return
+
+        # 2. Ambil (Fetch) file index.html yang ada di GitHub saat ini
+        api_url_index = f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html"
+        res_index = requests.get(api_url_index, headers=headers)
         
-        response = requests.put(api_url, json=data, headers=headers)
+        index_sha = ""
+        index_content_decoded = ""
         
-        if response.status_code in [201, 200]:
-            bot.reply_to(message, f"✅ **SUKSES, BOS!**\n\nBerita berhasil ditayangkan otomatis ke *website*!\n📄 Judul: {judul}\n🌐 Cek web Anda beberapa saat lagi di `news.ididenpasar.org`", parse_mode='MARKDOWN')
+        if res_index.status_code == 200:
+            index_data = res_index.json()
+            index_sha = index_data.get("sha", "")
+            index_content_decoded = base64.b64decode(index_data.get("content", "")).decode('utf-8')
         else:
-            bot.reply_to(message, f"❌ Gagal publish ke GitHub: {response.json().get('message', 'Unknown error')}")
+            # Jika index.html belum ada, buat kerangka dasar
+            index_content_decoded = """<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>IDI Denpasar News</title>
+</head>
+<body style="font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px;">
+    <h1 style="color: #004b87;">Portal Berita IDI Denpasar</h1>
+    <hr>
+    <h2>Daftar Berita Terbaru</h2>
+    <ul id="daftar-berita">
+    </ul>
+</body>
+</html>"""
+
+        # 3. Sisipkan link berita baru ke dalam index.html
+        new_list_item = f'<li><a href="{file_name}" style="color: #004b87; font-size: 18px; text-decoration: none;">{judul}</a> <span style="color: gray; font-size: 12px;">({tanggal})</span></li>\n'
+        
+        if '<ul id="daftar-berita">' in index_content_decoded:
+            index_content_updated = index_content_decoded.replace(
+                '<ul id="daftar-berita">',
+                f'<ul id="daftar-berita">\n    {new_list_item}'
+            )
+        else:
+            # Fallback jika tag ul tidak ditemukan
+            index_content_updated = index_content_decoded + f"\n<ul>\n    {new_list_item}\n</ul>"
+
+        # 4. Commit pembaruan index.html kembali ke GitHub
+        encoded_index = base64.b64encode(index_content_updated.encode('utf-8')).decode('utf-8')
+        data_index = {
+            "message": f"Update index.html dengan berita baru: {judul}",
+            "content": encoded_index,
+            "sha": index_sha
+        }
+        res_update_index = requests.put(api_url_index, json=data_index, headers=headers)
+
+        if res_update_index.status_code in [201, 200]:
+            bot.reply_to(message, f"✅ **SUKSES & BERHASIL DI-UPDATE KE WEB, BOS!**\n\n📄 Judul: {judul}\n🌐 Cek website utama Anda di `news.ididenpasar.org`", parse_mode='MARKDOWN')
+        else:
+            bot.reply_to(message, f"⚠️ Berita terkirim, tapi gagal memperbarui index.html di web.")
             
     except Exception as e:
         bot.reply_to(message, f"Terjadi error saat proses publish: {e}")
