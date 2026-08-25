@@ -84,7 +84,7 @@ def publish_berita(message):
         entry = latest_entries[index]
         judul = entry.title
         link_sumber = entry.link
-        tanggal = datetime.now().strftime("%Y-%m-%d")
+        tanggal = datetime.now().strftime("%d %B %Y")
         
         file_name = f"berita-{int(datetime.now().timestamp())}.html"
         
@@ -104,7 +104,7 @@ def publish_berita(message):
         <br>
         <a href="{link_sumber}" target="_blank" style="background: #004b87; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Baca Artikel Selengkapnya di Sumber Asli</a>
         <br><br><hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-        <p style="font-size: 12px;"><a href="index.html">← Kembali ke Beranda Berita IDI Denpasar</a></p>
+        <p style="font-size: 12px;"><a href="index.html">← Kembali ke Beranda IDI Denpasar</a></p>
     </div>
 </body>
 </html>"""
@@ -143,33 +143,63 @@ def publish_berita(message):
         index_sha = index_data.get("sha", "")
         index_content_decoded = base64.b64decode(index_data.get("content", "")).decode('utf-8')
 
-        # 3. Sisipkan list item baru secara fleksibel (aman dari error tag)
-        new_list_item = f'<li style="margin-bottom: 12px;"><a href="{file_name}" style="color: #004b87; font-size: 18px; text-decoration: none; font-weight: bold;">{judul}</a> <span style="color: #666; font-size: 12px;">({tanggal})</span></li>\n'
-        
-        if '<ul id="daftar-berita">' in index_content_decoded:
+        # 3. Format Card Layout yang Identik dengan Desain Website Anda
+        new_card_item = f'''
+        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
+            <div class="h-40 bg-medical-light p-6 flex flex-col justify-between relative">
+                <span class="bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full w-fit">Sumber: Google News</span>
+                <h3 class="font-bold text-lg text-medical-dark line-clamp-2">Informasi Kesehatan</h3>
+            </div>
+            <div class="p-6 flex flex-col flex-1">
+                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
+                    <span>📅 {tanggal}</span>
+                    <span>•</span>
+                    <span>Kategori: Medis</span>
+                </div>
+                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
+                    <a href="{file_name}" class="hover:text-medical">{judul}</a>
+                </h3>
+                <p class="text-sm text-gray-600 leading-relaxed flex-1">Ringkasan berita pilihan seputar dunia kesehatan terkini untuk masyarakat.</p>
+                <a href="{file_name}" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
+                    Baca selengkapnya <span class="ml-1">→</span>
+                </a>
+            </div>
+        </article>
+        '''
+
+        # Ganti judul teks section jadi "Berita Terbaru" dan masukkan card ke dalam grid
+        if 'Berita Terbaru dari Telegram' in index_content_decoded:
             index_content_updated = index_content_decoded.replace(
-                '<ul id="daftar-berita">',
-                f'<ul id="daftar-berita">\n    {new_list_item}'
-            )
-        elif '</main>' in index_content_decoded:
-            index_content_updated = index_content_decoded.replace(
-                '</main>',
-                f'<div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px;">\n<h3 style="color: #004b87;">Berita Terbaru</h3>\n<ul>\n    {new_list_item}</ul>\n</div>\n</main>'
+                'Berita Terbaru dari Telegram',
+                'Berita Terbaru'
             )
         else:
-            index_content_updated = index_content_decoded + f"\n<ul>\n    {new_list_item}\n</ul>"
+            index_content_updated = index_content_decoded
+
+        if '<ul id="daftar-berita">' in index_content_updated:
+            index_content_updated = index_content_updated.replace(
+                '<ul id="daftar-berita">',
+                f'<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">\n    {new_card_item}'
+            ).replace('</ul>', '</div>')
+        elif '</main>' in index_content_updated:
+            index_content_updated = index_content_updated.replace(
+                '</main>',
+                f'<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">\n<h2 class="text-2xl font-bold text-gray-900 mb-6">Berita Terbaru</h2>\n<div class="grid grid-cols-1 md:grid-cols-3 gap-6">\n{new_card_item}\n</div>\n</section>\n</main>'
+            )
+        else:
+            index_content_updated = index_content_updated + f"\n<div>{new_card_item}</div>"
 
         # 4. Commit pembaruan index.html ke GitHub
         encoded_index = base64.b64encode(index_content_updated.encode('utf-8')).decode('utf-8')
         data_index = {
-            "message": f"Update index.html: {judul}",
+            "message": f"Update index.html dengan Card Berita: {judul}",
             "content": encoded_index,
             "sha": index_sha
         }
         res_update_index = requests.put(api_url_index, json=data_index, headers=headers)
 
         if res_update_index.status_code in [201, 200]:
-            bot.reply_to(message, f"✅ **SUKSES & BERHASIL DI-UPDATE KE WEB, BOS!**\n\n📄 Judul: {judul}\n🌐 Cek website utama Anda di `news.ididenpasar.org`", parse_mode='MARKDOWN')
+            bot.reply_to(message, f"✅ **SUKSES! BERITA BERBENTUK KARTU TERCETAK DI WEB, BOS!**\n\n📄 Judul: {judul}\n🌐 Cek website utama Anda di `news.ididenpasar.org`", parse_mode='MARKDOWN')
         else:
             bot.reply_to(message, "⚠️ Berita terkirim, tapi gagal memperbarui index.html.")
             
