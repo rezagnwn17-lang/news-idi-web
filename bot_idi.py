@@ -8,7 +8,6 @@ import base64
 import requests
 from datetime import datetime
 
-# --- DUMMY SERVER UNTUK RENDER/RAILWAY ---
 class DummyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -22,7 +21,6 @@ def run_dummy_server():
     server.serve_forever()
 
 threading.Thread(target=run_dummy_server, daemon=True).start()
-# ---------------------------------------------
 
 print("Menyalakan Mesin Asisten Redaksi 24 Jam...")
 
@@ -90,7 +88,6 @@ def publish_berita(message):
         
         file_name = f"berita-{int(datetime.now().timestamp())}.html"
         
-        # Template HTML Artikel Berita Satuan
         html_content = f"""<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -146,17 +143,21 @@ def publish_berita(message):
         index_sha = index_data.get("sha", "")
         index_content_decoded = base64.b64decode(index_data.get("content", "")).decode('utf-8')
 
-        # 3. Sisipkan list item baru ke dalam <ul id="daftar-berita">
-        new_list_item = f'<li><a href="{file_name}" style="color: #004b87; font-size: 16px; text-decoration: none; font-weight: bold;">{judul}</a> <span style="color: #666; font-size: 12px;">({tanggal})</span></li>\n'
+        # 3. Sisipkan list item baru secara fleksibel (aman dari error tag)
+        new_list_item = f'<li style="margin-bottom: 12px;"><a href="{file_name}" style="color: #004b87; font-size: 18px; text-decoration: none; font-weight: bold;">{judul}</a> <span style="color: #666; font-size: 12px;">({tanggal})</span></li>\n'
         
         if '<ul id="daftar-berita">' in index_content_decoded:
             index_content_updated = index_content_decoded.replace(
                 '<ul id="daftar-berita">',
                 f'<ul id="daftar-berita">\n    {new_list_item}'
             )
+        elif '</main>' in index_content_decoded:
+            index_content_updated = index_content_decoded.replace(
+                '</main>',
+                f'<div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px;">\n<h3 style="color: #004b87;">Berita Terbaru</h3>\n<ul>\n    {new_list_item}</ul>\n</div>\n</main>'
+            )
         else:
-            bot.reply_to(message, "⚠️ Tag <ul id='daftar-berita'> tidak ditemukan di index.html.")
-            return
+            index_content_updated = index_content_decoded + f"\n<ul>\n    {new_list_item}\n</ul>"
 
         # 4. Commit pembaruan index.html ke GitHub
         encoded_index = base64.b64encode(index_content_updated.encode('utf-8')).decode('utf-8')
