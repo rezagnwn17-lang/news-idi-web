@@ -37,16 +37,14 @@ latest_entries = []
 user_news_data = {}
 
 # ==========================================
-# FUNGSI UPLOAD KE GITHUB (DUA MODE)
+# FUNGSI UPLOAD KE GITHUB
 # ==========================================
 def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=False, isi_berita="", link_sumber_html=""):
     try:
         file_name = f"berita-{int(datetime.now().timestamp())}.html"
         
-        # 1. TENTUKAN JENIS HALAMAN (Redirect atau Artikel Utuh)
-        if is_local:
-            # MODE PORTAL MANDIRI (ARTIKEL UTUH SEPERTI IDN TIMES DENGAN SUMBER DI BAWAH)
-            html_content = f"""<!DOCTYPE html>
+        # SEMUANYA SEKARANG PAKAI MODE ARTIKEL LOKAL (is_local selalu True)
+        html_content = f"""<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -62,7 +60,11 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
 <body class="bg-gray-50 font-sans">
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-medical">IDI Denpasar News</h1>
+            <!-- BAGIAN HEADER DENGAN LOGO -->
+            <div class="flex items-center space-x-3">
+                <img src="logo.png" alt="Logo IDI" class="h-10 w-auto object-contain">
+                <h1 class="text-2xl font-bold text-medical">IDI Cabang Denpasar</h1>
+            </div>
             <a href="index.html" class="text-sm font-medium text-gray-600 hover:text-medical">← Kembali ke Beranda</a>
         </div>
     </header>
@@ -83,23 +85,19 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
     </main>
 </body>
 </html>"""
-            link_tujuan = file_name
-        else:
-            # MODE GOOGLE NEWS (REDIRECT KE SUMBER ASLI)
-            html_content = f"""<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Redirecting...</title></head><body><script>window.location.href="{link_sumber}";</script></body></html>"""
-            link_tujuan = link_sumber
+        link_tujuan = file_name
 
         headers = {
             "Authorization": f"Bearer {GITHUB_TOKEN}",
             "Accept": "application/vnd.github+json"
         }
 
-        # 2. Upload File Berita ke GitHub
+        # Upload File Berita ke GitHub
         encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
         api_url_file = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{file_name}"
         requests.put(api_url_file, json={"message": f"Auto-publish: {judul}", "content": encoded_content}, headers=headers)
 
-        # 3. Ambil dan Update index.html
+        # Ambil dan Update index.html
         api_url_index = f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html"
         res_index = requests.get(api_url_index, headers=headers)
         
@@ -114,20 +112,20 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         new_card_item = f'''
         <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
             <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="{link_tujuan}" {"target='_blank'" if not is_local else ""}>
+                <a href="{link_tujuan}">
                     <img src="{gambar_url}" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                 </a>
                 <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
             </div>
             <div class="p-6 flex flex-col flex-1">
                 <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 {tanggal}</span><span>•</span><span>{'Redaksi IDI' if is_local else 'Google News'}</span>
+                    <span>📅 {tanggal}</span><span>•</span><span>Redaksi IDI</span>
                 </div>
                 <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="{link_tujuan}" {"target='_blank'" if not is_local else ""} class="hover:text-medical">{judul}</a>
+                    <a href="{link_tujuan}" class="hover:text-medical">{judul}</a>
                 </h3>
                 <p class="text-sm text-gray-600 leading-relaxed flex-1">{ringkasan}</p>
-                <a href="{link_tujuan}" {"target='_blank'" if not is_local else ""} class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
+                <a href="{link_tujuan}" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
                     Baca selengkapnya <span class="ml-1">→</span>
                 </a>
             </div>
@@ -146,7 +144,7 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         res_update_index = requests.put(api_url_index, json={"message": f"Update Berita: {judul}", "content": encoded_index, "sha": index_sha}, headers=headers)
 
         if res_update_index.status_code in [201, 200]:
-            bot.reply_to(message, f"✅ **SUKSES! ARTIKEL UTUH TELAH TAYANG DI WEB!**\n\n📄 Judul: {judul}\n🌐 Cek website utama Anda di `news.ididenpasar.org`", parse_mode='MARKDOWN')
+            bot.reply_to(message, f"✅ **SUKSES! HALAMAN BERITA TELAH TAYANG DI WEB!**\n\n📄 Judul: {judul}\n🌐 Cek website utama Anda di `news.ididenpasar.org`", parse_mode='MARKDOWN')
         else:
             bot.reply_to(message, "⚠️ Berita terkirim, tapi gagal memperbarui index.html.")
             
@@ -159,8 +157,8 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
 @bot.message_handler(commands=['start', 'help'])
 def sambutan(message):
     teks = "Halo Bos! 🤖 Asisten Redaksi IDI Denpasar siap bertugas!\n\n"
-    teks += "👉 /cari & /publish [nomor] - Publish otomatis dari Google News (sistem redirect)\n"
-    teks += "👉 /buat - Tulis ARTIKEL UTUH di website Anda sendiri!\n"
+    teks += "👉 /cari & /publish [nomor] - Tarik berita otomatis & jadikan artikel web\n"
+    teks += "👉 /buat - Tulis ARTIKEL UTUH manual buatan sendiri\n"
     teks += "👉 /cancel - Membatalkan proses pembuatan berita\n"
     bot.reply_to(message, teks)
 
@@ -171,7 +169,7 @@ def batal_proses(message):
         del user_news_data[chat_id]
     bot.reply_to(message, "❌ **Proses dibatalkan.** Ketik `/buat` jika ingin mulai lagi.", parse_mode='Markdown')
 
-# --- JALUR 1: BERITA OTOMATIS (GOOGLE NEWS - REDIRECT) ---
+# --- JALUR 1: BERITA OTOMATIS (GOOGLE NEWS) ---
 @bot.message_handler(commands=['cari'])
 def cari_berita(message):
     global latest_entries
@@ -209,7 +207,7 @@ def publish_berita(message):
         judul = entry.title
         link_sumber = entry.link
         tanggal = datetime.now().strftime("%d %B %Y")
-        ringkasan = "Liputan dan informasi penting seputar dunia kesehatan terkini untuk masyarakat."
+        ringkasan = "Liputan dan informasi penting seputar dunia kesehatan terkini."
         
         gambar_url = "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80"
         if 'description' in entry:
@@ -219,12 +217,17 @@ def publish_berita(message):
                 except:
                     pass
         
-        bot.reply_to(message, "🚀 Sedang memproses berita ke website... ⏳")
-        eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=False)
+        # --- PERUBAHAN: BIKIN KONTEN HALAMAN LOKAL UNTUK HASIL SEARCH ---
+        isi_berita = f"Ini adalah layanan rangkuman berita otomatis dari redaksi IDI Denpasar. Mengingat kebijakan hak cipta dari penerbit media asli, kami tidak dapat menampilkan seluruh isi teks di halaman ini."
+        
+        link_sumber_html = f'<br><a href="{link_sumber}" target="_blank" style="display: inline-block; background: #004b87; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px;">Baca Artikel Asli Selengkapnya &rarr;</a><br><br><hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;"><p style="color: #666; font-size: 14px;"><strong>Sumber berita:</strong> <a href="{link_sumber}" target="_blank" style="color: #004b87; text-decoration: underline;">{link_sumber}</a></p>'
+        
+        bot.reply_to(message, "🚀 Sedang merakit Halaman Berita ke website... ⏳")
+        eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=True, isi_berita=isi_berita, link_sumber_html=link_sumber_html)
     except Exception as e:
         bot.reply_to(message, f"Terjadi error: {e}")
 
-# --- JALUR 2: PORTAL BERITA MANDIRI (ARTIKEL UTUH DENGAN LINK SUMBER) ---
+# --- JALUR 2: PORTAL BERITA MANDIRI (ARTIKEL UTUH) ---
 @bot.message_handler(commands=['buat'])
 def buat_berita_manual(message):
     chat_id = message.chat.id
@@ -290,9 +293,8 @@ def proses_link_sumber_manual(message):
     
     link = message.text.strip()
     if link == '-' or link == '':
-        link_sumber_html = "" # Dikosongkan jika tidak ada link sumber
+        link_sumber_html = "" 
     else:
-        # Menambahkan garis pembatas dan tulisan sumber asli di bawah artikel
         link_sumber_html = f'<br><br><hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;"><p style="color: #666; font-size: 14px;"><strong>Sumber asli artikel:</strong> <a href="{link}" target="_blank" style="color: #004b87; text-decoration: underline;">{link}</a></p>'
 
     judul = user_news_data[chat_id]['judul']
