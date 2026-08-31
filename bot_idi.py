@@ -126,8 +126,17 @@ def sambutan(message):
     teks += "Perintah yang tersedia:\n"
     teks += "👉 /cari - Cari berita kesehatan dari Google News\n"
     teks += "👉 /publish [nomor] - Publish berita otomatis dari hasil pencarian\n"
-    teks += "👉 /buat - Tulis berita manual lengkap dengan UPLOAD FOTO dari galeri HP!\n"
+    teks += "👉 /buat - Tulis berita manual lengkap dengan UPLOAD FOTO!\n"
+    teks += "👉 /cancel - Membatalkan proses pembuatan berita\n"
     bot.reply_to(message, teks)
+
+# FITUR CANCEL / PEMBATALAN KAPAN SAJA
+@bot.message_handler(commands=['cancel'])
+def batal_proses(message):
+    chat_id = message.chat.id
+    if chat_id in user_news_data:
+        del user_news_data[chat_id]
+    bot.reply_to(message, "❌ **Proses pembuatan berita dibatalkan.** Ketik `/buat` jika ingin mulai lagi.", parse_mode='Markdown')
 
 
 # --- JALUR 1: BERITA OTOMATIS (GOOGLE NEWS) ---
@@ -184,38 +193,47 @@ def publish_berita(message):
         bot.reply_to(message, f"Terjadi error: {e}")
 
 
-# --- JALUR 2: BERITA MANUAL DENGAN UPLOAD FOTO INTERAKTIF ---
+# --- JALUR 2: BERITA MANUAL DENGAN PENGAMAN /CANCEL ---
 @bot.message_handler(commands=['buat'])
 def buat_berita_manual(message):
     chat_id = message.chat.id
     user_news_data[chat_id] = {}
-    msg = bot.reply_to(message, "📝 *BUAT BERITA MANUAL + FOTO*\n\nLangkah 1: Silakan balas pesan ini dengan **JUDUL** berita Anda:", parse_mode='Markdown')
+    msg = bot.reply_to(message, "📝 *BUAT BERITA MANUAL + FOTO*\n\nLangkah 1: Silakan balas pesan ini dengan **JUDUL** berita Anda:\n\n*(Ketik /cancel jika ingin batal)*", parse_mode='Markdown')
     bot.register_next_step_handler(msg, proses_judul_manual)
 
 def proses_judul_manual(message):
     chat_id = message.chat.id
+    if message.text and message.text.startswith('/cancel'):
+        batal_proses(message)
+        return
+        
     user_news_data[chat_id]['judul'] = message.text
-    msg = bot.reply_to(message, "✨ Bagus! Langkah 2: Ketik **RINGKASAN / ISI BERITA SINGKAT** (1-2 kalimat):")
+    msg = bot.reply_to(message, "✨ Bagus! Langkah 2: Ketik **RINGKASAN / ISI BERITA SINGKAT** (1-2 kalimat):\n\n*(Ketik /cancel jika ingin batal)*")
     bot.register_next_step_handler(msg, proses_ringkasan_manual)
 
 def proses_ringkasan_manual(message):
     chat_id = message.chat.id
+    if message.text and message.text.startswith('/cancel'):
+        batal_proses(message)
+        return
+        
     user_news_data[chat_id]['ringkasan'] = message.text
-    # Meminta user mengirimkan foto
-    msg = bot.reply_to(message, "📸 Mantap! Langkah 3: **Kirim/Upload FOTO** langsung dari galeri HP Anda ke chat ini (sebagai gambar/photo, jangan sebagai file dokumen ya):")
+    msg = bot.reply_to(message, "📸 Mantap! Langkah 3: **Kirim/Upload FOTO** langsung dari galeri HP Anda ke chat ini:\n\n*(Ketik /cancel jika ingin batal)*")
     bot.register_next_step_handler(msg, proses_foto_manual)
 
 def proses_foto_manual(message):
     chat_id = message.chat.id
+    # Cek apakah user mengetik /cancel
+    if message.text and message.text.startswith('/cancel'):
+        batal_proses(message)
+        return
+        
     try:
-        # Cek apakah user mengirim foto
         if message.photo:
-            # Ambil foto dengan resolusi tertinggi yang dikirim
             file_id = message.photo[-1].file_id
             file_info = bot.get_file(file_id)
             downloaded_file = bot.download_file(file_info.file_path)
             
-            # Upload foto tersebut secara permanen ke folder repository GitHub (folder 'images/')
             foto_nama = f"img-{int(datetime.now().timestamp())}.jpg"
             gh_headers = {
                 "Authorization": f"Bearer {GITHUB_TOKEN}",
@@ -224,28 +242,28 @@ def proses_foto_manual(message):
             encoded_img = base64.b64encode(downloaded_file).decode('utf-8')
             api_url_img = f"https://api.github.com/repos/{GITHUB_REPO}/contents/images/{foto_nama}"
             
-            res_img = requests.put(api_url_img, json={"message": f"Upload foto berita: {foto_nama}", "content": encoded_img}, headers=gh_headers)
+            res_img = requests.put(api_url_img, json={"message": f"Upload foto: {foto_nama}", "content": encoded_img}, headers=gh_headers)
             
             if res_img.status_code in [201, 200]:
-                # Gunakan URL raw dari GitHub agar gambar langsung tampil di web
                 user_news_data[chat_id]['gambar_url'] = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/images/{foto_nama}"
             else:
-                # Fallback jika gagal upload ke github, pakai gambar default medis
                 user_news_data[chat_id]['gambar_url'] = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"
         else:
-            # Jika user tidak kirim foto (mengirim teks), pakai gambar default
             user_news_data[chat_id]['gambar_url'] = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"
             
-        msg = bot.reply_to(message, "🔗 Terakhir! Langkah 4: Masukkan **LINK TUJUAN** (Misal link Google Form, PDF, atau website berita asli).\n\n*(Ketik tanda `-` (strip) jika tidak ada link khusus)*:")
+        msg = bot.reply_to(message, "🔗 Terakhir! Langkah 4: Masukkan **LINK TUJUAN** (Atau ketik `-` jika tidak ada):\n\n*(Ketik /cancel jika ingin batal)*")
         bot.register_next_step_handler(msg, proses_publish_manual)
     except Exception as e:
-        bot.reply_to(message, f"⚠️ Gagal memproses foto: {e}. Menggunakan foto default, silakan masukkan link tujuan:")
         user_news_data[chat_id]['gambar_url'] = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"
-        msg = bot.reply_to(message, "🔗 Masukkan **LINK TUJUAN** (Atau ketik `-` jika tidak ada):")
+        msg = bot.reply_to(message, "🔗 Masukkan **LINK TUJUAN** (Atau ketik `-` jika tidak ada):\n\n*(Ketik /cancel jika ingin batal)*")
         bot.register_next_step_handler(msg, proses_publish_manual)
 
 def proses_publish_manual(message):
     chat_id = message.chat.id
+    if message.text and message.text.startswith('/cancel'):
+        batal_proses(message)
+        return
+        
     link = message.text.strip()
     if link == '-' or link == '':
         link = "#"
