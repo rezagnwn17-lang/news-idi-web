@@ -34,32 +34,69 @@ if not BOT_TOKEN:
 
 bot = telebot.TeleBot(BOT_TOKEN)
 latest_entries = []
-user_news_data = {} # Memori draf berita manual
+user_news_data = {}
 
 # ==========================================
-# FUNGSI UPLOAD GAMBAR KE GITHUB & RAKIT HTML
+# FUNGSI UPLOAD KE GITHUB (DUA MODE)
 # ==========================================
-def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan):
+def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=False, isi_berita=""):
     try:
         file_name = f"berita-{int(datetime.now().timestamp())}.html"
         
-        html_content = f"""<!DOCTYPE html>
+        # 1. TENTUKAN JENIS HALAMAN (Redirect atau Artikel Utuh)
+        if is_local:
+            # MODE PORTAL MANDIRI (ARTIKEL UTUH SEPERTI IDN TIMES)
+            html_content = f"""<!DOCTYPE html>
 <html lang="id">
-<head><meta charset="UTF-8"><title>Redirecting...</title></head>
-<body><script>window.location.href="{link_sumber}";</script></body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{judul} - IDI Denpasar News</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {{
+            theme: {{ extend: {{ colors: {{ medical: '#004b87', 'medical-dark': '#003366', 'medical-light': '#e6f0fa', 'accent-green': '#00a651' }} }} }}
+        }}
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-medical">IDI Denpasar News</h1>
+            <a href="index.html" class="text-sm font-medium text-gray-600 hover:text-medical">← Kembali ke Beranda</a>
+        </div>
+    </header>
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-8">
+                <div class="flex items-center text-sm text-gray-500 mb-4 space-x-3">
+                    <span>📅 {tanggal}</span><span>•</span><span>Redaksi IDI Denpasar</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">{judul}</h1>
+                <img src="{gambar_url}" alt="Cover Berita" class="w-full h-auto max-h-[500px] object-cover rounded-xl mb-8">
+                <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">{isi_berita}</div>
+            </div>
+        </article>
+    </main>
+</body>
 </html>"""
+            link_tujuan = file_name
+        else:
+            # MODE GOOGLE NEWS (REDIRECT KE SUMBER ASLI)
+            html_content = f"""<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Redirecting...</title></head><body><script>window.location.href="{link_sumber}";</script></body></html>"""
+            link_tujuan = link_sumber
 
         headers = {
             "Authorization": f"Bearer {GITHUB_TOKEN}",
             "Accept": "application/vnd.github+json"
         }
 
-        # 1. Upload File Redirector HTML
+        # 2. Upload File Berita ke GitHub
         encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
         api_url_file = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{file_name}"
         requests.put(api_url_file, json={"message": f"Auto-publish: {judul}", "content": encoded_content}, headers=headers)
 
-        # 2. Ambil index.html
+        # 3. Ambil dan Update index.html
         api_url_index = f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html"
         res_index = requests.get(api_url_index, headers=headers)
         
@@ -71,31 +108,29 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         index_sha = index_data.get("sha", "")
         index_content_decoded = base64.b64decode(index_data.get("content", "")).decode('utf-8')
 
-        # 3. Format Card Layout Website
         new_card_item = f'''
         <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
             <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <img src="{gambar_url}" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                <a href="{link_tujuan}" {"target='_blank'" if not is_local else ""}>
+                    <img src="{gambar_url}" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                </a>
                 <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
             </div>
             <div class="p-6 flex flex-col flex-1">
                 <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 {tanggal}</span>
-                    <span>•</span>
-                    <span>Redaksi IDI</span>
+                    <span>📅 {tanggal}</span><span>•</span><span>{'Redaksi IDI' if is_local else 'Google News'}</span>
                 </div>
                 <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="{link_sumber}" target="_blank" class="hover:text-medical">{judul}</a>
+                    <a href="{link_tujuan}" {"target='_blank'" if not is_local else ""} class="hover:text-medical">{judul}</a>
                 </h3>
                 <p class="text-sm text-gray-600 leading-relaxed flex-1">{ringkasan}</p>
-                <a href="{link_sumber}" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
+                <a href="{link_tujuan}" {"target='_blank'" if not is_local else ""} class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
                     Baca selengkapnya <span class="ml-1">→</span>
                 </a>
             </div>
         </article>
         '''
 
-        # 4. Sisipkan ke index.html
         if '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">' in index_content_decoded:
             index_content_updated = index_content_decoded.replace(
                 '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">',
@@ -104,18 +139,16 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         else:
             index_content_updated = index_content_decoded + f"\n<div>{new_card_item}</div>"
 
-        # 5. Commit perubahan ke GitHub
         encoded_index = base64.b64encode(index_content_updated.encode('utf-8')).decode('utf-8')
-        res_update_index = requests.put(api_url_index, json={"message": f"Update Berita Manual: {judul}", "content": encoded_index, "sha": index_sha}, headers=headers)
+        res_update_index = requests.put(api_url_index, json={"message": f"Update Berita: {judul}", "content": encoded_index, "sha": index_sha}, headers=headers)
 
         if res_update_index.status_code in [201, 200]:
-            bot.reply_to(message, f"✅ **SUKSES! BERITA BERGAMBAR PILIHAN ANDA TAYANG DI WEB, BOS!**\n\n📄 Judul: {judul}\n🌐 Cek website utama Anda di `news.ididenpasar.org`", parse_mode='MARKDOWN')
+            bot.reply_to(message, f"✅ **SUKSES! ARTIKEL UTUH TELAH TAYANG DI WEB!**\n\n📄 Judul: {judul}\n🌐 Cek website utama Anda di `news.ididenpasar.org`", parse_mode='MARKDOWN')
         else:
             bot.reply_to(message, "⚠️ Berita terkirim, tapi gagal memperbarui index.html.")
             
     except Exception as e:
         bot.reply_to(message, f"❌ Terjadi error saat proses publish: {e}")
-
 
 # ==========================================
 # COMMAND TELEGRAM
@@ -123,23 +156,19 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
 @bot.message_handler(commands=['start', 'help'])
 def sambutan(message):
     teks = "Halo Bos! 🤖 Asisten Redaksi IDI Denpasar siap bertugas!\n\n"
-    teks += "Perintah yang tersedia:\n"
-    teks += "👉 /cari - Cari berita kesehatan dari Google News\n"
-    teks += "👉 /publish [nomor] - Publish berita otomatis dari hasil pencarian\n"
-    teks += "👉 /buat - Tulis berita manual lengkap dengan UPLOAD FOTO!\n"
+    teks += "👉 /cari & /publish [nomor] - Publish otomatis dari Google News (sistem redirect)\n"
+    teks += "👉 /buat - Tulis ARTIKEL UTUH di website Anda sendiri!\n"
     teks += "👉 /cancel - Membatalkan proses pembuatan berita\n"
     bot.reply_to(message, teks)
 
-# FITUR CANCEL / PEMBATALAN KAPAN SAJA
 @bot.message_handler(commands=['cancel'])
 def batal_proses(message):
     chat_id = message.chat.id
     if chat_id in user_news_data:
         del user_news_data[chat_id]
-    bot.reply_to(message, "❌ **Proses pembuatan berita dibatalkan.** Ketik `/buat` jika ingin mulai lagi.", parse_mode='Markdown')
+    bot.reply_to(message, "❌ **Proses dibatalkan.** Ketik `/buat` jika ingin mulai lagi.", parse_mode='Markdown')
 
-
-# --- JALUR 1: BERITA OTOMATIS (GOOGLE NEWS) ---
+# --- JALUR 1: BERITA OTOMATIS (GOOGLE NEWS - REDIRECT) ---
 @bot.message_handler(commands=['cari'])
 def cari_berita(message):
     global latest_entries
@@ -149,7 +178,7 @@ def cari_berita(message):
     try:
         feed = feedparser.parse(url_feed)
         if not feed.entries:
-            bot.reply_to(message, "⚠️ Maaf Bos, berita tidak ditemukan.")
+            bot.reply_to(message, "⚠️ Maaf, berita tidak ditemukan.")
             return
         latest_entries = feed.entries[:3]
         pesan = "<b>Laporan Berita Kesehatan Terbaru 🤖📰</b>\n\n"
@@ -188,45 +217,42 @@ def publish_berita(message):
                     pass
         
         bot.reply_to(message, "🚀 Sedang memproses berita ke website... ⏳")
-        eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan)
+        eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=False)
     except Exception as e:
         bot.reply_to(message, f"Terjadi error: {e}")
 
-
-# --- JALUR 2: BERITA MANUAL DENGAN PENGAMAN /CANCEL ---
+# --- JALUR 2: PORTAL BERITA MANDIRI (ARTIKEL UTUH) ---
 @bot.message_handler(commands=['buat'])
 def buat_berita_manual(message):
     chat_id = message.chat.id
     user_news_data[chat_id] = {}
-    msg = bot.reply_to(message, "📝 *BUAT BERITA MANUAL + FOTO*\n\nLangkah 1: Silakan balas pesan ini dengan **JUDUL** berita Anda:\n\n*(Ketik /cancel jika ingin batal)*", parse_mode='Markdown')
+    msg = bot.reply_to(message, "📝 *BUAT ARTIKEL UTUH + FOTO*\n\nLangkah 1: Silakan balas pesan ini dengan **JUDUL** berita Anda:\n*(Ketik /cancel jika batal)*", parse_mode='Markdown')
     bot.register_next_step_handler(msg, proses_judul_manual)
 
 def proses_judul_manual(message):
     chat_id = message.chat.id
-    if message.text and message.text.startswith('/cancel'):
-        batal_proses(message)
-        return
-        
+    if message.text and message.text.startswith('/cancel'): return batal_proses(message)
     user_news_data[chat_id]['judul'] = message.text
-    msg = bot.reply_to(message, "✨ Bagus! Langkah 2: Ketik **RINGKASAN / ISI BERITA SINGKAT** (1-2 kalimat):\n\n*(Ketik /cancel jika ingin batal)*")
+    msg = bot.reply_to(message, "✨ Bagus! Langkah 2: Ketik **RINGKASAN SINGKAT** (Untuk ditampilkan di halaman depan web, 1-2 kalimat):")
     bot.register_next_step_handler(msg, proses_ringkasan_manual)
 
 def proses_ringkasan_manual(message):
     chat_id = message.chat.id
-    if message.text and message.text.startswith('/cancel'):
-        batal_proses(message)
-        return
-        
+    if message.text and message.text.startswith('/cancel'): return batal_proses(message)
     user_news_data[chat_id]['ringkasan'] = message.text
-    msg = bot.reply_to(message, "📸 Mantap! Langkah 3: **Kirim/Upload FOTO** langsung dari galeri HP Anda ke chat ini:\n\n*(Ketik /cancel jika ingin batal)*")
+    msg = bot.reply_to(message, "📰 Mantap! Langkah 3: Ketik **ISI BERITA LENGKAP** (Anda bisa mengetik beberapa paragraf panjang di sini):")
+    bot.register_next_step_handler(msg, proses_isi_berita_manual)
+
+def proses_isi_berita_manual(message):
+    chat_id = message.chat.id
+    if message.text and message.text.startswith('/cancel'): return batal_proses(message)
+    user_news_data[chat_id]['isi_berita'] = message.text
+    msg = bot.reply_to(message, "📸 Terakhir! Langkah 4: **Kirim/Upload FOTO** dari galeri HP Anda ke chat ini (sebagai Cover Artikel):")
     bot.register_next_step_handler(msg, proses_foto_manual)
 
 def proses_foto_manual(message):
     chat_id = message.chat.id
-    # Cek apakah user mengetik /cancel
-    if message.text and message.text.startswith('/cancel'):
-        batal_proses(message)
-        return
+    if message.text and message.text.startswith('/cancel'): return batal_proses(message)
         
     try:
         if message.photo:
@@ -235,10 +261,7 @@ def proses_foto_manual(message):
             downloaded_file = bot.download_file(file_info.file_path)
             
             foto_nama = f"img-{int(datetime.now().timestamp())}.jpg"
-            gh_headers = {
-                "Authorization": f"Bearer {GITHUB_TOKEN}",
-                "Accept": "application/vnd.github+json"
-            }
+            gh_headers = {"Authorization": f"Bearer {GITHUB_TOKEN}", "Accept": "application/vnd.github+json"}
             encoded_img = base64.b64encode(downloaded_file).decode('utf-8')
             api_url_img = f"https://api.github.com/repos/{GITHUB_REPO}/contents/images/{foto_nama}"
             
@@ -251,31 +274,18 @@ def proses_foto_manual(message):
         else:
             user_news_data[chat_id]['gambar_url'] = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"
             
-        msg = bot.reply_to(message, "🔗 Terakhir! Langkah 4: Masukkan **LINK TUJUAN** (Atau ketik `-` jika tidak ada):\n\n*(Ketik /cancel jika ingin batal)*")
-        bot.register_next_step_handler(msg, proses_publish_manual)
-    except Exception as e:
-        user_news_data[chat_id]['gambar_url'] = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"
-        msg = bot.reply_to(message, "🔗 Masukkan **LINK TUJUAN** (Atau ketik `-` jika tidak ada):\n\n*(Ketik /cancel jika ingin batal)*")
-        bot.register_next_step_handler(msg, proses_publish_manual)
-
-def proses_publish_manual(message):
-    chat_id = message.chat.id
-    if message.text and message.text.startswith('/cancel'):
-        batal_proses(message)
-        return
+        # Langsung proses pembuatan artikel utuh
+        judul = user_news_data[chat_id]['judul']
+        ringkasan = user_news_data[chat_id]['ringkasan']
+        isi_berita = user_news_data[chat_id]['isi_berita']
+        gambar_url = user_news_data[chat_id]['gambar_url']
+        tanggal = datetime.now().strftime("%d %B %Y")
         
-    link = message.text.strip()
-    if link == '-' or link == '':
-        link = "#"
-    
-    judul = user_news_data[chat_id]['judul']
-    ringkasan = user_news_data[chat_id]['ringkasan']
-    gambar_url = user_news_data[chat_id]['gambar_url']
-    link_sumber = link
-    tanggal = datetime.now().strftime("%d %B %Y")
-    
-    bot.reply_to(message, "🚀 Sedang mengunggah foto dan menerbitkan berita ke website... ⏳")
-    eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan)
+        bot.reply_to(message, "🚀 Sedang merakit Halaman Artikel Utuh ke website... ⏳")
+        eksekusi_publish_github(message, judul, "", gambar_url, tanggal, ringkasan, is_local=True, isi_berita=isi_berita)
+        
+    except Exception as e:
+        bot.reply_to(message, f"❌ Terjadi kesalahan saat memproses gambar/artikel: {e}")
 
 print("Bot siap mendengarkan perintah Bos...")
 bot.infinity_polling()
