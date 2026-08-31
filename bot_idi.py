@@ -7,6 +7,7 @@ import threading
 import base64
 import requests
 from datetime import datetime
+import re  # <--- TAMBAHAN BARU UNTUK MERAPIKAN URL
 
 class DummyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -41,9 +42,17 @@ user_news_data = {}
 # ==========================================
 def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=False, isi_berita="", link_sumber_html=""):
     try:
-        file_name = f"berita-{int(datetime.now().timestamp())}.html"
+        # --- PERUBAHAN BARU: BIKIN NAMA FILE DARI JUDUL (SLUG) ---
+        # Contoh: "IDI Denpasar Hebat!" menjadi "idi-denpasar-hebat"
+        slug_judul = re.sub(r'[^a-z0-9]+', '-', judul.lower()).strip('-')
         
-        # SEMUANYA SEKARANG PAKAI MODE ARTIKEL LOKAL (is_local selalu True)
+        # Pengaman: kalau judulnya aneh dan kosong setelah dibersihkan, pakai angka tanggal
+        if not slug_judul:
+            slug_judul = f"berita-{int(datetime.now().timestamp())}"
+            
+        file_name = f"{slug_judul}.html"
+        # ---------------------------------------------------------
+        
         html_content = f"""<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -60,7 +69,6 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
 <body class="bg-gray-50 font-sans">
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <!-- BAGIAN HEADER DENGAN LOGO -->
             <div class="flex items-center space-x-3">
                 <img src="logo.png" alt="Logo IDI" class="h-10 w-auto object-contain">
                 <h1 class="text-2xl font-bold text-medical">IDI Cabang Denpasar</h1>
@@ -92,12 +100,10 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
             "Accept": "application/vnd.github+json"
         }
 
-        # Upload File Berita ke GitHub
         encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
         api_url_file = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{file_name}"
         requests.put(api_url_file, json={"message": f"Auto-publish: {judul}", "content": encoded_content}, headers=headers)
 
-        # Ambil dan Update index.html
         api_url_index = f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html"
         res_index = requests.get(api_url_index, headers=headers)
         
@@ -144,7 +150,9 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         res_update_index = requests.put(api_url_index, json={"message": f"Update Berita: {judul}", "content": encoded_index, "sha": index_sha}, headers=headers)
 
         if res_update_index.status_code in [201, 200]:
-            bot.reply_to(message, f"✅ **SUKSES! HALAMAN BERITA TELAH TAYANG DI WEB!**\n\n📄 Judul: {judul}\n🌐 Cek website utama Anda di `news.ididenpasar.org`", parse_mode='MARKDOWN')
+            link_artikel = f"https://news.ididenpasar.org/{file_name}"
+            pesan_sukses = f"✅ **SUKSES! ARTIKEL TELAH TAYANG DI WEB!**\n\n📄 **Judul:** {judul}\n\n🔗 **Link Berita Anda:**\n{link_artikel}\n\n*(Silakan copy link di atas untuk dibagikan)*"
+            bot.reply_to(message, pesan_sukses, parse_mode='MARKDOWN')
         else:
             bot.reply_to(message, "⚠️ Berita terkirim, tapi gagal memperbarui index.html.")
             
@@ -217,7 +225,6 @@ def publish_berita(message):
                 except:
                     pass
         
-        # --- PERUBAHAN: BIKIN KONTEN HALAMAN LOKAL UNTUK HASIL SEARCH ---
         isi_berita = f"Ini adalah layanan rangkuman berita otomatis dari redaksi IDI Denpasar. Mengingat kebijakan hak cipta dari penerbit media asli, kami tidak dapat menampilkan seluruh isi teks di halaman ini."
         
         link_sumber_html = f'<br><a href="{link_sumber}" target="_blank" style="display: inline-block; background: #004b87; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px;">Baca Artikel Asli Selengkapnya &rarr;</a><br><br><hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;"><p style="color: #666; font-size: 14px;"><strong>Sumber berita:</strong> <a href="{link_sumber}" target="_blank" style="color: #004b87; text-decoration: underline;">{link_sumber}</a></p>'
@@ -280,7 +287,6 @@ def proses_foto_manual(message):
         else:
             user_news_data[chat_id]['gambar_url'] = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"
             
-        # Minta Link Sumber
         msg = bot.reply_to(message, "🔗 Terakhir! Langkah 5: Masukkan **LINK SUMBER ASLI** (Atau ketik `-` jika berita ini murni buatan sendiri):")
         bot.register_next_step_handler(msg, proses_link_sumber_manual)
         
