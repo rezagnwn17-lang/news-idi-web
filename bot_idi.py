@@ -39,13 +39,13 @@ user_news_data = {}
 # ==========================================
 # FUNGSI UPLOAD KE GITHUB (DUA MODE)
 # ==========================================
-def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=False, isi_berita=""):
+def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=False, isi_berita="", link_sumber_html=""):
     try:
         file_name = f"berita-{int(datetime.now().timestamp())}.html"
         
         # 1. TENTUKAN JENIS HALAMAN (Redirect atau Artikel Utuh)
         if is_local:
-            # MODE PORTAL MANDIRI (ARTIKEL UTUH SEPERTI IDN TIMES)
+            # MODE PORTAL MANDIRI (ARTIKEL UTUH SEPERTI IDN TIMES DENGAN SUMBER DI BAWAH)
             html_content = f"""<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -75,6 +75,9 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">{judul}</h1>
                 <img src="{gambar_url}" alt="Cover Berita" class="w-full h-auto max-h-[500px] object-cover rounded-xl mb-8">
                 <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">{isi_berita}</div>
+                
+                {link_sumber_html}
+                
             </div>
         </article>
     </main>
@@ -221,7 +224,7 @@ def publish_berita(message):
     except Exception as e:
         bot.reply_to(message, f"Terjadi error: {e}")
 
-# --- JALUR 2: PORTAL BERITA MANDIRI (ARTIKEL UTUH) ---
+# --- JALUR 2: PORTAL BERITA MANDIRI (ARTIKEL UTUH DENGAN LINK SUMBER) ---
 @bot.message_handler(commands=['buat'])
 def buat_berita_manual(message):
     chat_id = message.chat.id
@@ -233,21 +236,21 @@ def proses_judul_manual(message):
     chat_id = message.chat.id
     if message.text and message.text.startswith('/cancel'): return batal_proses(message)
     user_news_data[chat_id]['judul'] = message.text
-    msg = bot.reply_to(message, "✨ Bagus! Langkah 2: Ketik **RINGKASAN SINGKAT** (Untuk ditampilkan di halaman depan web, 1-2 kalimat):")
+    msg = bot.reply_to(message, "✨ Bagus! Langkah 2: Ketik **RINGKASAN SINGKAT** (Untuk teks di kartu halaman depan):")
     bot.register_next_step_handler(msg, proses_ringkasan_manual)
 
 def proses_ringkasan_manual(message):
     chat_id = message.chat.id
     if message.text and message.text.startswith('/cancel'): return batal_proses(message)
     user_news_data[chat_id]['ringkasan'] = message.text
-    msg = bot.reply_to(message, "📰 Mantap! Langkah 3: Ketik **ISI BERITA LENGKAP** (Anda bisa mengetik beberapa paragraf panjang di sini):")
+    msg = bot.reply_to(message, "📰 Mantap! Langkah 3: Ketik **ISI BERITA LENGKAP** (Pastikan copy-paste artikelnya sampai selesai ya):")
     bot.register_next_step_handler(msg, proses_isi_berita_manual)
 
 def proses_isi_berita_manual(message):
     chat_id = message.chat.id
     if message.text and message.text.startswith('/cancel'): return batal_proses(message)
     user_news_data[chat_id]['isi_berita'] = message.text
-    msg = bot.reply_to(message, "📸 Terakhir! Langkah 4: **Kirim/Upload FOTO** dari galeri HP Anda ke chat ini (sebagai Cover Artikel):")
+    msg = bot.reply_to(message, "📸 Langkah 4: **Kirim/Upload FOTO** dari galeri HP Anda ke chat ini (sebagai Cover Artikel):")
     bot.register_next_step_handler(msg, proses_foto_manual)
 
 def proses_foto_manual(message):
@@ -274,18 +277,32 @@ def proses_foto_manual(message):
         else:
             user_news_data[chat_id]['gambar_url'] = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"
             
-        # Langsung proses pembuatan artikel utuh
-        judul = user_news_data[chat_id]['judul']
-        ringkasan = user_news_data[chat_id]['ringkasan']
-        isi_berita = user_news_data[chat_id]['isi_berita']
-        gambar_url = user_news_data[chat_id]['gambar_url']
-        tanggal = datetime.now().strftime("%d %B %Y")
-        
-        bot.reply_to(message, "🚀 Sedang merakit Halaman Artikel Utuh ke website... ⏳")
-        eksekusi_publish_github(message, judul, "", gambar_url, tanggal, ringkasan, is_local=True, isi_berita=isi_berita)
+        # Minta Link Sumber
+        msg = bot.reply_to(message, "🔗 Terakhir! Langkah 5: Masukkan **LINK SUMBER ASLI** (Atau ketik `-` jika berita ini murni buatan sendiri):")
+        bot.register_next_step_handler(msg, proses_link_sumber_manual)
         
     except Exception as e:
-        bot.reply_to(message, f"❌ Terjadi kesalahan saat memproses gambar/artikel: {e}")
+        bot.reply_to(message, f"❌ Terjadi kesalahan: {e}")
+
+def proses_link_sumber_manual(message):
+    chat_id = message.chat.id
+    if message.text and message.text.startswith('/cancel'): return batal_proses(message)
+    
+    link = message.text.strip()
+    if link == '-' or link == '':
+        link_sumber_html = "" # Dikosongkan jika tidak ada link sumber
+    else:
+        # Menambahkan garis pembatas dan tulisan sumber asli di bawah artikel
+        link_sumber_html = f'<br><br><hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;"><p style="color: #666; font-size: 14px;"><strong>Sumber asli artikel:</strong> <a href="{link}" target="_blank" style="color: #004b87; text-decoration: underline;">{link}</a></p>'
+
+    judul = user_news_data[chat_id]['judul']
+    ringkasan = user_news_data[chat_id]['ringkasan']
+    isi_berita = user_news_data[chat_id]['isi_berita']
+    gambar_url = user_news_data[chat_id]['gambar_url']
+    tanggal = datetime.now().strftime("%d %B %Y")
+    
+    bot.reply_to(message, "🚀 Sedang merakit Halaman Artikel Utuh ke website... ⏳")
+    eksekusi_publish_github(message, judul, link, gambar_url, tanggal, ringkasan, is_local=True, isi_berita=isi_berita, link_sumber_html=link_sumber_html)
 
 print("Bot siap mendengarkan perintah Bos...")
 bot.infinity_polling()
