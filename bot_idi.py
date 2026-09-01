@@ -7,7 +7,7 @@ import threading
 import base64
 import requests
 from datetime import datetime
-import re  # <--- TAMBAHAN BARU UNTUK MERAPIKAN URL
+import re
 
 class DummyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -38,72 +38,122 @@ latest_entries = []
 user_news_data = {}
 
 # ==========================================
-# FUNGSI UPLOAD KE GITHUB
+# FUNGSI UPLOAD KE GITHUB DENGAN DESAIN PREMIUM
 # ==========================================
 def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=False, isi_berita="", link_sumber_html=""):
     try:
-        # --- PERUBAHAN BARU: BIKIN NAMA FILE DARI JUDUL (SLUG) ---
-        # Contoh: "IDI Denpasar Hebat!" menjadi "idi-denpasar-hebat"
+        # BIKIN NAMA FILE DARI JUDUL (SLUG)
         slug_judul = re.sub(r'[^a-z0-9]+', '-', judul.lower()).strip('-')
-        
-        # Pengaman: kalau judulnya aneh dan kosong setelah dibersihkan, pakai angka tanggal
         if not slug_judul:
             slug_judul = f"berita-{int(datetime.now().timestamp())}"
             
         file_name = f"{slug_judul}.html"
-        # ---------------------------------------------------------
+        link_tujuan = file_name
         
+        # DESAIN HTML PREMIUM (GLASSMORPHISM, HERO IMAGE)
         html_content = f"""<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{judul} - IDI Denpasar News</title>
+    <!-- Import Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {{
-            theme: {{ extend: {{ colors: {{ medical: '#004b87', 'medical-dark': '#003366', 'medical-light': '#e6f0fa', 'accent-green': '#00a651' }} }} }}
+            theme: {{ 
+                extend: {{ 
+                    fontFamily: {{ sans: ['Inter', 'sans-serif'] }},
+                    colors: {{ medical: '#004b87', 'medical-dark': '#003366', 'medical-light': '#e6f0fa', 'accent-green': '#00a651' }} 
+                }} 
+            }}
         }}
     </script>
 </head>
-<body class="bg-gray-50 font-sans">
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+<body class="bg-slate-50 antialiased text-slate-800">
+    <!-- Header Utama (Glassmorphism) -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <img src="logo.png" alt="Logo IDI" class="h-10 w-auto object-contain">
-                <h1 class="text-2xl font-bold text-medical">IDI Cabang Denpasar</h1>
+                <h1 class="text-xl md:text-2xl font-bold text-medical tracking-tight">IDI Cabang Denpasar</h1>
             </div>
-            <a href="index.html" class="text-sm font-medium text-gray-600 hover:text-medical">← Kembali ke Beranda</a>
+            <a href="index.html" class="text-sm font-semibold text-slate-500 hover:text-medical transition duration-300 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span class="hidden sm:inline">Kembali ke Beranda</span>
+            </a>
         </div>
     </header>
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-8">
-                <div class="flex items-center text-sm text-gray-500 mb-4 space-x-3">
-                    <span>📅 {tanggal}</span><span>•</span><span>Redaksi IDI Denpasar</span>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <!-- Bungkus Artikel dengan Efek Kartu Premium -->
+        <article class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100">
+            
+            <!-- Hero Image Cinematic -->
+            <div class="relative w-full h-64 md:h-[450px]">
+                <img src="{gambar_url}" alt="Cover Berita" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+                
+                <!-- Kategori & Tanggal di Atas Gambar -->
+                <div class="absolute bottom-6 left-6 md:bottom-8 md:left-10 text-white pr-6">
+                    <span class="inline-block bg-accent-green text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3 shadow-lg">Berita Terkini</span>
+                    <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight tracking-tight drop-shadow-md">{judul}</h1>
+                    <div class="flex items-center text-sm font-medium text-slate-300 space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>{tanggal}</span>
+                    </div>
                 </div>
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">{judul}</h1>
-                <img src="{gambar_url}" alt="Cover Berita" class="w-full h-auto max-h-[500px] object-cover rounded-xl mb-8">
-                <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">{isi_berita}</div>
-                
+            </div>
+
+            <!-- Konten Teks -->
+            <div class="p-6 md:p-10 lg:px-12">
+                <div class="prose prose-lg md:prose-xl prose-slate max-w-none leading-relaxed prose-a:text-medical hover:prose-a:text-medical-dark prose-img:rounded-2xl prose-img:shadow-md">
+                    {isi_berita}
+                </div>
+
                 {link_sumber_html}
+            </div>
+            
+            <!-- Footer Artikel (Author Box & Share) -->
+            <div class="bg-slate-50 border-t border-slate-100 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                <!-- Profil Penulis -->
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-medical-light flex items-center justify-center text-medical font-bold text-xl shadow-inner">
+                        ID
+                    </div>
+                    <div>
+                        <p class="text-sm text-slate-500 font-medium mb-0.5">Ditulis oleh</p>
+                        <p class="text-lg font-bold text-slate-900">Redaksi IDI Denpasar</p>
+                    </div>
+                </div>
                 
+                <!-- Tombol Share Interaktif -->
+                <div class="flex gap-3 items-center">
+                    <span class="text-sm text-slate-500 font-semibold mr-1">Bagikan:</span>
+                    <a href="https://api.whatsapp.com/send?text={urllib.parse.quote(judul)}%20-%20Baca%20selengkapnya%20di%20website%20IDI%20Denpasar" target="_blank" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-[#25D366] hover:text-white hover:border-transparent transition-all shadow-sm">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </a>
+                </div>
             </div>
         </article>
     </main>
 </body>
 </html>"""
-        link_tujuan = file_name
 
         headers = {
             "Authorization": f"Bearer {GITHUB_TOKEN}",
             "Accept": "application/vnd.github+json"
         }
 
+        # Upload File Berita ke GitHub
         encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
         api_url_file = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{file_name}"
         requests.put(api_url_file, json={"message": f"Auto-publish: {judul}", "content": encoded_content}, headers=headers)
 
+        # Ambil dan Update index.html
         api_url_index = f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html"
         res_index = requests.get(api_url_index, headers=headers)
         
