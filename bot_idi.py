@@ -38,11 +38,10 @@ latest_entries = []
 user_news_data = {}
 
 # ==========================================
-# FUNGSI UPLOAD KE GITHUB DENGAN DESAIN PREMIUM
+# FUNGSI PUBLISH KE GITHUB
 # ==========================================
 def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ringkasan, is_local=False, isi_berita="", link_sumber_html=""):
     try:
-        # BIKIN NAMA FILE DARI JUDUL (SLUG)
         slug_judul = re.sub(r'[^a-z0-9]+', '-', judul.lower()).strip('-')
         if not slug_judul:
             slug_judul = f"berita-{int(datetime.now().timestamp())}"
@@ -50,14 +49,12 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         file_name = f"{slug_judul}.html"
         link_tujuan = file_name
         
-        # DESAIN HTML PREMIUM (GLASSMORPHISM, HERO IMAGE, & FOOTER KONTAK)
         html_content = f"""<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{judul} - IDI Denpasar News</title>
-    <!-- Import Font Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -74,7 +71,6 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
     </script>
 </head>
 <body class="bg-slate-50 antialiased text-slate-800 flex flex-col min-h-screen">
-    <!-- Header Utama (Glassmorphism) -->
     <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-200">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
@@ -89,15 +85,10 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
     </header>
 
     <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex-grow">
-        <!-- Bungkus Artikel dengan Efek Kartu Premium -->
         <article class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100">
-            
-            <!-- Hero Image Cinematic -->
             <div class="relative w-full h-64 md:h-[450px]">
                 <img src="{gambar_url}" alt="Cover Berita" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
-                
-                <!-- Kategori & Tanggal di Atas Gambar -->
                 <div class="absolute bottom-6 left-6 md:bottom-8 md:left-10 text-white pr-6">
                     <span class="inline-block bg-accent-green text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3 shadow-lg">Berita Terkini</span>
                     <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight tracking-tight drop-shadow-md">{judul}</h1>
@@ -107,28 +98,20 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
                     </div>
                 </div>
             </div>
-
-            <!-- Konten Teks -->
             <div class="p-6 md:p-10 lg:px-12">
                 <div class="prose prose-lg md:prose-xl prose-slate max-w-none leading-relaxed prose-a:text-medical hover:prose-a:text-medical-dark prose-img:rounded-2xl prose-img:shadow-md">
                     {isi_berita}
                 </div>
-
                 {link_sumber_html}
             </div>
-            
-            <!-- Profil Penulis & Tombol Share -->
             <div class="bg-slate-50 border-t border-slate-100 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 rounded-full bg-medical-light flex items-center justify-center text-medical font-bold text-xl shadow-inner">
-                        ID
-                    </div>
+                    <div class="w-14 h-14 rounded-full bg-medical-light flex items-center justify-center text-medical font-bold text-xl shadow-inner">ID</div>
                     <div>
                         <p class="text-sm text-slate-500 font-medium mb-0.5">Ditulis oleh</p>
                         <p class="text-lg font-bold text-slate-900">Redaksi IDI Denpasar</p>
                     </div>
                 </div>
-                
                 <div class="flex gap-3 items-center">
                     <span class="text-sm text-slate-500 font-semibold mr-1">Bagikan:</span>
                     <a href="https://api.whatsapp.com/send?text={urllib.parse.quote(judul)}%20-%20Baca%20selengkapnya%20di%20website%20IDI%20Denpasar" target="_blank" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-[#25D366] hover:text-white hover:border-transparent transition-all shadow-sm">
@@ -139,29 +122,19 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         </article>
     </main>
 
-    <!-- FOOTER KONTAK IDI -->
     <footer class="bg-white border-t border-slate-200 mt-8 py-10">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
-            <!-- Info IDI -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
             <div class="flex-1 text-center md:text-left">
                 <div class="flex items-center justify-center md:justify-start space-x-3 mb-5">
                     <img src="logo.png" alt="Logo IDI" class="h-10 w-auto object-contain">
                     <h2 class="text-xl font-bold text-medical tracking-tight">IDI Cabang Denpasar</h2>
                 </div>
-                <div class="space-y-2">
-                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start">
-                        <span class="mr-2 text-lg">📍</span> Pertokoan Grand Sudirman Blok C-36 Jl. PB Sudirman Denpasar
-                    </p>
-                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start">
-                        <span class="mr-2 text-lg">📞</span> 087751444330
-                    </p>
-                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start">
-                        <span class="mr-2 text-lg">✉️</span> ididenpasar@gmail.com
-                    </p>
+                <div class="space-y-3">
+                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start"><span class="mr-3 text-lg">📍</span> Pertokoan Grand Sudirman Blok C-36 Jl. PB Sudirman Denpasar</p>
+                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start"><span class="mr-3 text-lg">📞</span> 087751444330</p>
+                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start"><span class="mr-3 text-lg">✉️</span> ididenpasar@gmail.com</p>
                 </div>
             </div>
-            
-            <!-- Copyright -->
             <div class="flex-1 text-center md:text-right text-slate-400 text-sm flex flex-col md:justify-end h-full mt-4 md:mt-10">
                 <p>&copy; 2026 Ikatan Dokter Indonesia Cabang Denpasar.</p>
                 <p>All rights reserved.</p>
@@ -176,12 +149,12 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
             "Accept": "application/vnd.github+json"
         }
 
-        # Upload File Berita ke GitHub
+        # Simpan file artikel HTML
         encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
         api_url_file = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{file_name}"
         requests.put(api_url_file, json={"message": f"Auto-publish: {judul}", "content": encoded_content}, headers=headers)
 
-        # Ambil dan Update index.html
+        # Ambil index.html
         api_url_index = f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html"
         res_index = requests.get(api_url_index, headers=headers)
         
@@ -193,8 +166,9 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         index_sha = index_data.get("sha", "")
         index_content_decoded = base64.b64decode(index_data.get("content", "")).decode('utf-8')
 
+        # Beri penanda unik (data-file) pada card artikel agar bisa dihapus otomatis nanti
         new_card_item = f'''
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
+        <article data-file="{file_name}" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
             <div class="h-48 bg-gray-200 relative overflow-hidden group">
                 <a href="{link_tujuan}">
                     <img src="{gambar_url}" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
@@ -229,7 +203,7 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
 
         if res_update_index.status_code in [201, 200]:
             link_artikel = f"https://news.ididenpasar.org/{file_name}"
-            pesan_sukses = f"✅ **SUKSES! ARTIKEL TELAH TAYANG DI WEB!**\n\n📄 **Judul:** {judul}\n\n🔗 **Link Berita Anda:**\n{link_artikel}\n\n*(Silakan copy link di atas untuk dibagikan)*"
+            pesan_sukses = f"✅ **SUKSES! ARTIKEL TELAH TAYANG DI WEB!**\n\n📄 **Judul:** {judul}\n\n🔗 **Link Berita Anda:**\n{link_artikel}\n\n*(Ketik `/list` jika ingin melihat daftar artikel untuk ditarik/dihapus)*"
             bot.reply_to(message, pesan_sukses, parse_mode='MARKDOWN')
         else:
             bot.reply_to(message, "⚠️ Berita terkirim, tapi gagal memperbarui index.html.")
@@ -238,14 +212,16 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         bot.reply_to(message, f"❌ Terjadi error saat proses publish: {e}")
 
 # ==========================================
-# COMMAND TELEGRAM
+# COMMAND TELEGRAM & FITUR PULL OUT (HAPUS)
 # ==========================================
 @bot.message_handler(commands=['start', 'help'])
 def sambutan(message):
     teks = "Halo Bos! 🤖 Asisten Redaksi IDI Denpasar siap bertugas!\n\n"
-    teks += "👉 /cari & /publish [nomor] - Tarik berita otomatis & jadikan artikel web\n"
-    teks += "👉 /buat - Tulis ARTIKEL UTUH manual buatan sendiri\n"
-    teks += "👉 /cancel - Membatalkan proses pembuatan berita\n"
+    teks += "👉 /cari & /publish [nomor] - Tarik berita otomatis\n"
+    teks += "👉 /buat - Tulis artikel utuh manual\n"
+    teks += "👉 /list - Lihat daftar artikel aktif di web (untuk hapus/tarik)\n"
+    teks += "👉 /hapus [nomor] - Tarik/Hapus berita dari web\n"
+    teks += "👉 /cancel - Membatalkan proses\n"
     bot.reply_to(message, teks)
 
 @bot.message_handler(commands=['cancel'])
@@ -253,7 +229,95 @@ def batal_proses(message):
     chat_id = message.chat.id
     if chat_id in user_news_data:
         del user_news_data[chat_id]
-    bot.reply_to(message, "❌ **Proses dibatalkan.** Ketik `/buat` jika ingin mulai lagi.", parse_mode='Markdown')
+    bot.reply_to(message, "❌ **Proses dibatalkan.**", parse_mode='Markdown')
+
+# FITUR LIST ARTIKEL UNTUK PULL OUT
+@bot.message_handler(commands=['list'])
+def list_artikel_web(message):
+    try:
+        headers = {"Authorization": f"Bearer {GITHUB_TOKEN}", "Accept": "application/vnd.github+json"}
+        res_index = requests.get(f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html", headers=headers)
+        if res_index.status_code != 200:
+            bot.reply_to(message, "⚠️ Gagal membaca data website.")
+            return
+            
+        index_content = base64.b64decode(res_index.json().get("content", "")).decode('utf-8')
+        
+        # Cari semua card artikel yang ada di index.html berdasarkan penanda data-file
+        matches = re.findall(r'data-file="([^"]+)"', index_content)
+        titles = re.findall(r'<h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">\s*<a href="[^"]+" class="hover:text-medical">([^<]+)</a>', index_content)
+        
+        if not matches:
+            bot.reply_to(message, "📭 Belum ada artikel aktif di halaman utama website.")
+            return
+            
+        user_news_data[message.chat.id] = {"active_articles": matches}
+        
+        teks = "📋 **DAFTAR ARTIKEL AKTIF DI WEBSITE:**\n\n"
+        for i, filename in enumerate(matches):
+            title_text = titles[i] if i < len(titles) else filename
+            teks += f"<b>[{i+1}]</b> {title_text}\n<code>File: {filename}</code>\n\n"
+        teks += "<i>Ketik <b>/hapus [nomor]</b> untuk menarik/menghapus artikel dari web! (Contoh: /hapus 1)</i>"
+        
+        bot.reply_to(message, teks, parse_mode='HTML')
+    except Exception as e:
+        bot.reply_to(message, f"❌ Error: {e}")
+
+# FITUR HAPUS / PULL OUT BERITA
+@bot.message_handler(commands=['hapus'])
+def hapus_artikel_web(message):
+    chat_id = message.chat.id
+    try:
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message, "⚠️ Format salah! Ketik `/list` dulu untuk melihat nomor urut, lalu ketik `/hapus [nomor]`.")
+            return
+            
+        idx = int(parts[1]) - 1
+        active_list = user_news_data.get(chat_id, {}).get("active_articles", [])
+        
+        if not active_list:
+            # Jika user belum sempat /list, kita coba ambil data otomatis langsung dari GitHub
+            headers = {"Authorization": f"Bearer {GITHUB_TOKEN}", "Accept": "application/vnd.github+json"}
+            res_index = requests.get(f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html", headers=headers)
+            if res_index.status_code == 200:
+                index_content = base64.b64decode(res_index.json().get("content", "")).decode('utf-8')
+                active_list = re.findall(r'data-file="([^"]+)"', index_content)
+                
+        if not active_list or idx < 0 or idx >= len(active_list):
+            bot.reply_to(message, "⚠️ Nomor artikel tidak valid atau daftar kosong. Silakan ketik `/list` terlebih dahulu.")
+            return
+            
+        target_file = active_list[idx]
+        headers = {"Authorization": f"Bearer {GITHUB_TOKEN}", "Accept": "application/vnd.github+json"}
+        
+        bot.reply_to(message, f"🗑️ Sedang menarik/menghapus artikel `{target_file}` dari website... ⏳")
+        
+        # 1. Hapus file HTML spesifik artikel tersebut dari GitHub
+        file_res = requests.get(f"https://api.github.com/repos/{GITHUB_REPO}/contents/{target_file}", headers=headers)
+        if file_res.status_code == 200:
+            file_sha = file_res.json().get("sha")
+            requests.delete(f"https://api.github.com/repos/{GITHUB_REPO}/contents/{target_file}", 
+                            json={"message": f"Hapus artikel: {target_file}", "sha": file_sha}, headers=headers)
+                            
+        # 2. Hapus card artikel tersebut dari index.html
+        res_index = requests.get(f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html", headers=headers)
+        if res_index.status_code == 200:
+            index_data = res_index.json()
+            index_sha = index_data.get("sha")
+            index_content = base64.b64decode(index_data.get("content", "")).decode('utf-8')
+            
+            # Hapus blok <article data-file="target_file">...</article>
+            pattern = re.compile(rf'<article data-file="{target_file}".*?</article>', re.DOTALL)
+            updated_content = pattern.sub('', index_content)
+            
+            encoded_index = base64.b64encode(updated_content.encode('utf-8')).decode('utf-8')
+            requests.put(f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html", 
+                         json={"message": f"Pull out artikel: {target_file}", "content": encoded_index, "sha": index_sha}, headers=headers)
+                         
+        bot.reply_to(message, f"✅ **BERHASIL!** Artikel nomor {idx+1} (`{target_file}`) telah ditarik dan dihapus dari website.", parse_mode='MARKDOWN')
+    except Exception as e:
+        bot.reply_to(message, f"❌ Terjadi error saat menghapus: {e}")
 
 # --- JALUR 1: BERITA OTOMATIS (GOOGLE NEWS) ---
 @bot.message_handler(commands=['cari'])
@@ -304,7 +368,6 @@ def publish_berita(message):
                     pass
         
         isi_berita = f"Ini adalah layanan rangkuman berita otomatis dari redaksi IDI Denpasar. Mengingat kebijakan hak cipta dari penerbit media asli, kami tidak dapat menampilkan seluruh isi teks di halaman ini."
-        
         link_sumber_html = f'<br><a href="{link_sumber}" target="_blank" style="display: inline-block; background: #004b87; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px;">Baca Artikel Asli Selengkapnya &rarr;</a><br><br><hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;"><p style="color: #666; font-size: 14px;"><strong>Sumber berita:</strong> <a href="{link_sumber}" target="_blank" style="color: #004b87; text-decoration: underline;">{link_sumber}</a></p>'
         
         bot.reply_to(message, "🚀 Sedang merakit Halaman Berita ke website... ⏳")
@@ -324,21 +387,21 @@ def proses_judul_manual(message):
     chat_id = message.chat.id
     if message.text and message.text.startswith('/cancel'): return batal_proses(message)
     user_news_data[chat_id]['judul'] = message.text
-    msg = bot.reply_to(message, "✨ Bagus! Langkah 2: Ketik **RINGKASAN SINGKAT** (Untuk teks di kartu halaman depan):")
+    msg = bot.reply_to(message, "✨ Bagus! Langkah 2: Ketik **RINGKASAN SINGKAT**:")
     bot.register_next_step_handler(msg, proses_ringkasan_manual)
 
 def proses_ringkasan_manual(message):
     chat_id = message.chat.id
     if message.text and message.text.startswith('/cancel'): return batal_proses(message)
     user_news_data[chat_id]['ringkasan'] = message.text
-    msg = bot.reply_to(message, "📰 Mantap! Langkah 3: Ketik **ISI BERITA LENGKAP** (Pastikan copy-paste artikelnya sampai selesai ya):")
+    msg = bot.reply_to(message, "📰 Mantap! Langkah 3: Ketik **ISI BERITA LENGKAP**:")
     bot.register_next_step_handler(msg, proses_isi_berita_manual)
 
 def proses_isi_berita_manual(message):
     chat_id = message.chat.id
     if message.text and message.text.startswith('/cancel'): return batal_proses(message)
     user_news_data[chat_id]['isi_berita'] = message.text
-    msg = bot.reply_to(message, "📸 Langkah 4: **Kirim/Upload FOTO** dari galeri HP Anda ke chat ini (sebagai Cover Artikel):")
+    msg = bot.reply_to(message, "📸 Langkah 4: **Kirim/Upload FOTO** dari galeri HP Anda ke chat ini:")
     bot.register_next_step_handler(msg, proses_foto_manual)
 
 def proses_foto_manual(message):
@@ -365,7 +428,7 @@ def proses_foto_manual(message):
         else:
             user_news_data[chat_id]['gambar_url'] = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"
             
-        msg = bot.reply_to(message, "🔗 Terakhir! Langkah 5: Masukkan **LINK SUMBER ASLI** (Atau ketik `-` jika berita ini murni buatan sendiri):")
+        msg = bot.reply_to(message, "🔗 Terakhir! Langkah 5: Masukkan **LINK SUMBER ASLI** (Atau ketik `-` jika buatan sendiri):")
         bot.register_next_step_handler(msg, proses_link_sumber_manual)
         
     except Exception as e:
