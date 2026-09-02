@@ -50,7 +50,7 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         file_name = f"{slug_judul}.html"
         link_tujuan = file_name
         
-        # DESAIN HTML PREMIUM (GLASSMORPHISM, HERO IMAGE)
+        # DESAIN HTML PREMIUM (GLASSMORPHISM, HERO IMAGE, & FOOTER KONTAK)
         html_content = f"""<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -73,7 +73,7 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         }}
     </script>
 </head>
-<body class="bg-slate-50 antialiased text-slate-800">
+<body class="bg-slate-50 antialiased text-slate-800 flex flex-col min-h-screen">
     <!-- Header Utama (Glassmorphism) -->
     <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-200">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -88,7 +88,7 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex-grow">
         <!-- Bungkus Artikel dengan Efek Kartu Premium -->
         <article class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100">
             
@@ -117,9 +117,8 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
                 {link_sumber_html}
             </div>
             
-            <!-- Footer Artikel (Author Box & Share) -->
+            <!-- Profil Penulis & Tombol Share -->
             <div class="bg-slate-50 border-t border-slate-100 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                <!-- Profil Penulis -->
                 <div class="flex items-center gap-4">
                     <div class="w-14 h-14 rounded-full bg-medical-light flex items-center justify-center text-medical font-bold text-xl shadow-inner">
                         ID
@@ -130,7 +129,6 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
                     </div>
                 </div>
                 
-                <!-- Tombol Share Interaktif -->
                 <div class="flex gap-3 items-center">
                     <span class="text-sm text-slate-500 font-semibold mr-1">Bagikan:</span>
                     <a href="https://api.whatsapp.com/send?text={urllib.parse.quote(judul)}%20-%20Baca%20selengkapnya%20di%20website%20IDI%20Denpasar" target="_blank" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-[#25D366] hover:text-white hover:border-transparent transition-all shadow-sm">
@@ -140,6 +138,36 @@ def eksekusi_publish_github(message, judul, link_sumber, gambar_url, tanggal, ri
             </div>
         </article>
     </main>
+
+    <!-- FOOTER KONTAK IDI -->
+    <footer class="bg-white border-t border-slate-200 mt-8 py-10">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
+            <!-- Info IDI -->
+            <div class="flex-1 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start space-x-3 mb-5">
+                    <img src="logo.png" alt="Logo IDI" class="h-10 w-auto object-contain">
+                    <h2 class="text-xl font-bold text-medical tracking-tight">IDI Cabang Denpasar</h2>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start">
+                        <span class="mr-2 text-lg">📍</span> Pertokoan Grand Sudirman Blok C-36 Jl. PB Sudirman Denpasar
+                    </p>
+                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start">
+                        <span class="mr-2 text-lg">📞</span> 087751444330
+                    </p>
+                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start">
+                        <span class="mr-2 text-lg">✉️</span> ididenpasar@gmail.com
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div class="flex-1 text-center md:text-right text-slate-400 text-sm flex flex-col md:justify-end h-full mt-4 md:mt-10">
+                <p>&copy; 2026 Ikatan Dokter Indonesia Cabang Denpasar.</p>
+                <p>All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>"""
 
