@@ -1,730 +1,121 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <title>IDI Denpasar • Portal Berita Kesehatan</title>
-  <!-- Tailwind CSS via CDN + komponen kecil custom -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font sederhana untuk kesan profesional -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: #f9fafc;
-    }
-    /* subtle green-blue accent */
-    .text-medical {
-      color: #0e5e6f;
-    }
-    .bg-medical {
-      background: #0e5e6f;
-    }
-    .border-medical {
-      border-color: #0e5e6f;
-    }
-    .accent-green {
-      color: #0b7b4c;
-    }
-    .bg-accent-green {
-      background: #0b7b4c;
-    }
-    .hover-grow {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .hover-grow:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 24px -10px rgba(0, 102, 102, 0.15);
-    }
-    .hero-overlay {
-      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.1) 100%);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda - IDI Denpasar News</title>
+    <!-- Import Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { 
+                extend: { 
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { medical: '#004b87', 'medical-dark': '#003366', 'medical-light': '#e6f0fa', 'accent-green': '#00a651' } 
+                } 
+            }
+        }
+    </script>
 </head>
-<body class="antialiased text-gray-800">
+<body class="bg-slate-50 antialiased text-slate-800 flex flex-col min-h-screen">
+    
+    <!-- HEADER -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="logo.png" alt="Logo IDI" class="h-10 w-auto object-contain">
+                <h1 class="text-xl md:text-2xl font-bold text-medical tracking-tight">IDI Cabang Denpasar</h1>
+            </div>
+            <!-- Ikon Menu Hamburger untuk HP -->
+            <button class="text-slate-600 hover:text-medical focus:outline-none md:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+    </header>
 
-  <!-- Header / Navigasi -->
-  <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-20">
-        <!-- Logo + Nama -->
-        <div class="flex items-center gap-3">
-          <img src="logo-idi.png" alt="Logo IDI Denpasar" class="h-12 w-auto rounded-lg shadow-sm" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22 viewBox=%220 0 48 48%22%3E%3Ccircle cx=%2224%22 cy=%2224%22 r=%2222%22 fill=%22%230e5e6f%22/%3E%3Ctext x=%2224%22 y=%2230%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22 font-weight=%22bold%22%3EIDI%3C/text%3E%3C/svg%3E';">
-          <span class="text-xl sm:text-2xl font-bold text-medical tracking-tight">IDI Cabang Denpasar</span>
+    <!-- KONTEN UTAMA -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex-grow w-full">
+
+        <!-- ========================================== -->
+        <!-- TOMBOL LOGIN & DAFTAR (BAGIAN ATAS) -->
+        <!-- ========================================== -->
+        <div class="mb-12">
+            <div class="flex flex-col gap-10 md:flex-row md:gap-8 bg-white p-6 md:p-10 rounded-3xl border border-slate-100 shadow-sm">
+                
+                <!-- Bagian 1: Lengkapi Identitas -->
+                <div class="flex-1 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-medium text-[#4a9c59] mb-4 tracking-tight">Lengkapi Identitas<br>Anda</h2>
+                        <p class="text-slate-600 font-medium mb-1">Anda anggota IDI Denpasar?</p>
+                        <p class="text-slate-500 text-sm mb-6 leading-relaxed">Silahkan lakukan Inisialisasi untuk mendapatkan username & password untuk login ke Sistem</p>
+                    </div>
+                    <!-- Ganti tanda # dengan link asli -->
+                    <a href="https://ididenpasar.org/inisialisasi" class="block w-full text-center bg-[#4a9c59] hover:bg-[#3d834a] text-white font-bold text-sm py-4 px-4 rounded-xl transition duration-300 shadow-md">
+                        MULAI SEKARANG
+                    </a>
+                </div>
+
+                <!-- Bagian 2: Pendaftaran Anggota Baru -->
+                <div class="flex-1 flex flex-col justify-between mt-4 md:mt-0">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-medium text-[#4a9c59] mb-4 tracking-tight">Pendaftaran Anggota<br>Baru</h2>
+                        <p class="text-slate-600 font-medium mb-1">Anda belum terdaftar sebagai anggota IDI Denpasar?</p>
+                        <p class="text-slate-500 text-sm mb-6 leading-relaxed">Silahkan mengisi formulir pendaftaran</p>
+                    </div>
+                    <!-- Ganti tanda # dengan link asli -->
+                    <a href="website-ap-southeast-1.amazonaws.com" class="block w-full text-center bg-[#4a9c59] hover:bg-[#3d834a] text-white font-bold text-sm py-4 px-4 rounded-xl transition duration-300 shadow-md">
+                        DAFTAR
+                    </a>
+                </div>
+
+            </div>
         </div>
 
-        <!-- Desktop Navigation -->
-        <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
-          <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-medical bg-blue-50/70 transition">Beranda</a>
-          <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-medical hover:bg-gray-50 transition">Edukasi Kesehatan</a>
-          <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-medical hover:bg-gray-50 transition">Suara IDI Denpasar</a>
-          <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-medical hover:bg-gray-50 transition">Kegiatan IDI</a>
-          <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-medical hover:bg-gray-50 transition">Kontak</a>
-          <a href="https://sistem.ididenpasar.org/admin/auth/login" target="_blank" class="ml-4 px-4 py-2 bg-teal-600 text-white text-sm font-semibold rounded-md hover:bg-teal-700 transition shadow-sm">
-  🔑 Login
-</a>
-
-        </nav>
-
-        <!-- Mobile menu button (hamburger) -->
-        <div class="md:hidden">
-          <button id="mobile-menu-toggle" class="text-gray-600 hover:text-medical focus:outline-none p-2" aria-label="Buka menu">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile menu (hidden by default) -->
-      <div id="mobile-menu" class="md:hidden hidden pb-4 pt-2 border-t border-gray-100 mt-2">
-        <a href="#" class="block py-3 px-3 rounded-md text-base font-medium text-white bg-medical">Beranda</a>
-        <a href="#" class="block py-3 px-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Edukasi Kesehatan</a>
-        <a href="#" class="block py-3 px-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Suara IDI Denpasar</a>
-        <a href="#" class="block py-3 px-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Kegiatan IDI</a>
-        <a href="#" class="block py-3 px-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Kontak</a>
-        <a href="https://sistem.ididenpasar.org/admin/auth/login" target="_blank" class="block mt-4 px-3 py-2 bg-teal-600 text-white text-center font-semibold rounded-md hover:bg-teal-700 transition shadow-sm">
-  🔑 Login
-</a>
-
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    
-    <!-- Hero Section: Berita Utama Hari Ini -->
-    <section class="mb-12 rounded-2xl overflow-hidden relative shadow-lg hover-grow transition-all">
-      <div class="relative w-full h-64 sm:h-96 md:h-[28rem] bg-gray-200">
-        <!-- Gambar thumbnail besar -->
-        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Berita Utama" class="w-full h-64 sm:h-96 md:h-[28rem] object-cover">
-
-        <div class="hero-overlay absolute inset-0"></div>
-        <div class="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white">
-              <!-- Kategori -->
-    <span class="inline-block bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
-      Seminar Kesehatan
-    </span>
-    
-    <!-- Judul -->
-    <h1 class="text-xl sm:text-2xl font-bold leading-snug mb-2">
-      IDI Denpasar Gelar Penyuluhan Hipertensi di Puskesmas II Denpasar Timur
-    </h1>
-    
-    <!-- Deskripsi -->
-    <p class="text-sm text-gray-200 mb-4 line-clamp-2">
-      Ratusan warga antusias ikuti skrining gratis dan edukasi pola hidup sehat. Simak liputan lengkapnya.
-    </p>
-    
-    <!-- Waktu -->
-    <div class="flex items-center gap-3 text-xs text-gray-300">
-      <span>📅 9 Agustus 2026</span>
-      <span>•</span>
-      <span>⏱️ 5 menit baca</span>
-    </div>
-
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Grid Artikel Terkini Otomatis dari Telegram -->
-<section>
-    <div class="flex items-center justify-between mb-7">
-        <h2 class="text-2xl sm:text-3xl font-bold text-medical">Artikel Terkini</h2>
-    </div>
-    
-    <!-- Wadah penampung berita bot. Jangan ubah class-nya ya Bos! -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="kementerian-pertahanan-republik-indonesia-kementerian-pertahanan.html">
-                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 01 September 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="kementerian-pertahanan-republik-indonesia-kementerian-pertahanan.html" class="hover:text-medical">Kementerian Pertahanan Republik Indonesia - Kementerian Pertahanan</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini.</p>
-                <a href="kementerian-pertahanan-republik-indonesia-kementerian-pertahanan.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
+        <!-- ========================================== -->
+        <!-- ARTIKEL TERKINI (TEMPAT BOT MENYISIPKAN BERITA) -->
+        <!-- ========================================== -->
+        <h2 class="text-2xl md:text-3xl font-bold text-medical-dark mb-6">Artikel Terkini</h2>
         
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="berobat-tak-perlu-lagi-bawa-berkas-sekarang-ada-satusehat-rme-cnbc-indonesia.html">
-                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 01 September 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="berobat-tak-perlu-lagi-bawa-berkas-sekarang-ada-satusehat-rme-cnbc-indonesia.html" class="hover:text-medical">Berobat Tak Perlu Lagi Bawa Berkas, Sekarang Ada SATUSEHAT RME - CNBC Indonesia</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini.</p>
-                <a href="berobat-tak-perlu-lagi-bawa-berkas-sekarang-ada-satusehat-rme-cnbc-indonesia.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="sinyal-kenaikan-covid-19-di-korsel-warga-berburu-masker-alat-tes-lagi.html">
-                    <img src="https://raw.githubusercontent.com/rezagnwn17-lang/news-idi-web/main/images/img-1788266411.jpg" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 01 September 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="sinyal-kenaikan-covid-19-di-korsel-warga-berburu-masker-alat-tes-lagi.html" class="hover:text-medical">Sinyal Kenaikan Covid-19 Di Korsel, Warga berburu masker alat tes lagi</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Jakarta - Seiring berulangnya tren peningkatan infeksi di Korea Selatan, kebiasaan belanja khas era pandemi kembali terjadi. Banyak warga memborong masker hingga alat tes mandiri (self-test kit).
-Laporan The Straits Times mencatat tiga jaringan minimarket terbesar di Korea Selatan, yakni 7-Eleven, GS25, dan CU, mengalami lonjakan drastis pada penjualan produk sanitasi dan obat-obatan sepanjang bulan ini.
-
-Data 7-Eleven menunjukkan penjualan self-test kit COVID-19 meroket hingga 62 persen pada periode 1-26 Agustus 2-26, dibandingkan bulan sebelumnya. Di saat bersamaan, penjualan masker naik 17 persen, obat flu melonjak 15 persen, dan obat pereda demam meningkat</p>
-                <a href="sinyal-kenaikan-covid-19-di-korsel-warga-berburu-masker-alat-tes-lagi.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="krisis-mental-celah-baru-industri-nikotin-prohealth-id.html">
-                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="krisis-mental-celah-baru-industri-nikotin-prohealth-id.html" class="hover:text-medical">Krisis Mental, Celah Baru Industri Nikotin - prohealth.id</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini.</p>
-                <a href="krisis-mental-celah-baru-industri-nikotin-prohealth-id.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="sinyal-kenaikan-covid-19-di-korsel-warga-berburu-masker-alat-tes-lagi.html">
-                    <img src="https://raw.githubusercontent.com/rezagnwn17-lang/news-idi-web/main/images/img-1788188708.jpg" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="sinyal-kenaikan-covid-19-di-korsel-warga-berburu-masker-alat-tes-lagi.html" class="hover:text-medical">Sinyal Kenaikan COVID-19 di Korsel, Warga Berburu Masker-Alat Tes Lagi</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Jakarta - Seiring berulangnya tren peningkatan infeksi di Korea Selatan, kebiasaan belanja khas era pandemi kembali terjadi. Banyak warga memborong masker hingga alat tes mandiri (self-test kit).
-Laporan The Straits Times mencatat tiga jaringan minimarket terbesar di Korea Selatan, yakni 7-Eleven, GS25, dan CU, mengalami lonjakan drastis pada penjualan produk sanitasi dan obat-obatan sepanjang bulan ini.</p>
-                <a href="sinyal-kenaikan-covid-19-di-korsel-warga-berburu-masker-alat-tes-lagi.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="berita-1788180882.html">
-                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="berita-1788180882.html" class="hover:text-medical">ANGKATAN LAUT - TNI ANGKATAN LAUT</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini.</p>
-                <a href="berita-1788180882.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="berita-1788180681.html">
-                    <img src="https://raw.githubusercontent.com/rezagnwn17-lang/news-idi-web/main/images/img-1788180663.jpg" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="berita-1788180681.html" class="hover:text-medical">/cari</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Menguasai BHD berarti siap menolong di menit yang paling menentukan. Himpunan Fasyankes Dokter Indonesia (HIFDI) adalah organisasi yang mewadahi ekosistem fasilitas pelayanan kesehatan di Indonesia, dari klinik pratama, tempat praktik mandiri dokter, hingga puskesmas, dan hadir sebagai mitra strategis penguatan layanan kesehatan di lini depan. HIFDI mendorong fasyankes dan sekolah berkolaborasi memperluas pelatihan BHD yang menarik dan sesuai konteks, karena rantai pertolongan yang kuat dimulai dari tangan orang pertama di tempat kejadian.</p>
-                <a href="berita-1788180681.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="berita-1788180195.html">
-                    <img src="https://raw.githubusercontent.com/rezagnwn17-lang/news-idi-web/main/images/img-1788180171.jpg" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="berita-1788180195.html" class="hover:text-medical">None</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Menguasai BHD berarti siap menolong di menit yang paling menentukan. Himpunan Fasyankes Dokter Indonesia (HIFDI) adalah organisasi yang mewadahi ekosistem fasilitas pelayanan kesehatan di Indonesia, dari klinik pratama, tempat praktik mandiri dokter, hingga puskesmas, dan hadir sebagai mitra strategis penguatan layanan kesehatan di lini depan. HIFDI mendorong fasyankes dan sekolah berkolaborasi memperluas pelatihan BHD yang menarik dan sesuai konteks, karena rantai pertolongan yang kuat dimulai dari tangan orang pertama di tempat kejadian.
-
-Referensi??</p>
-                <a href="berita-1788180195.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="berita-1788179534.html">
-                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="berita-1788179534.html" class="hover:text-medical">Krisis Mental, Celah Baru Industri Nikotin - Prohealth.id</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini.</p>
-                <a href="berita-1788179534.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxOczBkSEJjRmtJdVlPM3dxbXpocFhkMGp5N1BCRUhrT2ViajB3Q0s4ZHlxYzJTTmI4T3FjTHFGdm9UYjdJY255eFdhRGdPdGFnNk5tMFc0Q1NMWUdOMUVjMjVCTGduSzkxLTVkaGJBQ3pLVHRYNlFKNWNiR0MzZUgtRTJEZ1NkVGZPcDVEMVpLOUdCTXFPWEVfM3BNQUV4TnpCYk5YUmhyR1E5eE1sbHhWcDRCNlc4bHc?oc=5" target='_blank'>
-                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Google News</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxOczBkSEJjRmtJdVlPM3dxbXpocFhkMGp5N1BCRUhrT2ViajB3Q0s4ZHlxYzJTTmI4T3FjTHFGdm9UYjdJY255eFdhRGdPdGFnNk5tMFc0Q1NMWUdOMUVjMjVCTGduSzkxLTVkaGJBQ3pLVHRYNlFKNWNiR0MzZUgtRTJEZ1NkVGZPcDVEMVpLOUdCTXFPWEVfM3BNQUV4TnpCYk5YUmhyR1E5eE1sbHhWcDRCNlc4bHc?oc=5" target='_blank' class="hover:text-medical">Semarak HUT Ke-81 RI, Cimahi Kejar Imunasi Lengkap Bagi Anak - ppid.cimahikota.go.id</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini untuk masyarakat.</p>
-                <a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxOczBkSEJjRmtJdVlPM3dxbXpocFhkMGp5N1BCRUhrT2ViajB3Q0s4ZHlxYzJTTmI4T3FjTHFGdm9UYjdJY255eFdhRGdPdGFnNk5tMFc0Q1NMWUdOMUVjMjVCTGduSzkxLTVkaGJBQ3pLVHRYNlFKNWNiR0MzZUgtRTJEZ1NkVGZPcDVEMVpLOUdCTXFPWEVfM3BNQUV4TnpCYk5YUmhyR1E5eE1sbHhWcDRCNlc4bHc?oc=5" target='_blank' class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="berita-1788178627.html" >
-                    <img src="https://raw.githubusercontent.com/rezagnwn17-lang/news-idi-web/main/images/img-1788178616.jpg" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="berita-1788178627.html"  class="hover:text-medical">Temukan Masalah Gigi hingga Obesitas pada Siswa, Kemenkes Jadikan CKG Pintu Masuk Wujudkan Generasi Unggul</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Kota Bogor, 28 Agustus 2026 
-
-Kementerian Kesehatan (Kemenkes) RI menjadikan program Cek Kesehatan Gratis (CKG) Anak Sekolah sebagai pintu masuk mendeteksi dan menangani masalah kesehatan pada siswa mulai dari gigi berlubang, anemia, hingga obesitas — demi mewujudkan generasi Indonesia yang unggul.
-
-Penegasan itu disampaikan Wakil Menteri Kesehatan (Wamenkes), Dante Saksono Harbuwono saat meninjau pelaksanaan CKG Anak Sekolah di SMPN 5 Kota Bogor, Jawa Barat, Jumat (28/8). Kegiatan tersebut dilakukan bersama Wakil Menteri Pendidikan Dasar dan Menengah (Wamendikdasmen) Fajar Riza serta Wakil Menteri Pemberdayaan Perempuan dan Perlindungan Anak (Wamen PPPA) Veronica Tan.</p>
-                <a href="berita-1788178627.html"  class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="berita-1788178246.html" >
-                    <img src="https://raw.githubusercontent.com/rezagnwn17-lang/news-idi-web/main/images/img-1788178237.jpg" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="berita-1788178246.html"  class="hover:text-medical">Cegah Stunting lewat 4 Intervensi 1000 HPK, Wamenkes Tekankan Pentingnya Peran "Ayah Siaga"</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Kota Bogor, 28 Agustus 2026
-
-Pemenuhan kesehatan dan gizi anak bukan lagi sekadar urusan para ibu. Di era modern ini, keterlibatan aktif seorang suami sangat krusial dalam membentuk kualitas fisik dan kecerdasan anak sejak dalam kandungan.
-
-Pesan hangat namun tegas ini disampaikan oleh Wakil Menteri Kesehatan (Wamenkes) RI saat melakukan kerja ke Kota Bogor, untuk meninjau pelaksanaan Cek Kesehatan Gratis (CKG) Anak Sekolah dan program 1000 Hari Pertama Kehidupan (HPK), Jumat (28/8).</p>
-                <a href="berita-1788178246.html"  class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="berita-1788177736.html" >
-                    <img src="https://raw.githubusercontent.com/rezagnwn17-lang/news-idi-web/main/images/img-1788177735.jpg" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="berita-1788177736.html"  class="hover:text-medical">Kemenkes Siap Siaga Hadapi Dampak Karhutla, 848 Tenaga Kesehatan Dimobilisasi</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Jakarta, 28 Agustus 2026 
-
-Kementerian Kesehatan (Kemenkes) RI terus memperkuat respons kesehatan dalam menghadapi dampak kebakaran hutan dan lahan (Karhutla) yang terjadi di sejumlah wilayah Indonesia. Upaya dilakukan untuk memastikan masyarakat terdampak tetap mendapatkan pelayanan kesehatan serta perlindungan dari risiko kesehatan akibat paparan asap.</p>
-                <a href="berita-1788177736.html"  class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <img src="https://raw.githubusercontent.com/rezagnwn17-lang/news-idi-web/main/images/img-1788175785.jpg" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span>
-                    <span>•</span>
-                    <span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://www.kemkes.go.id/id/Wabah-Virus-HMPV-Merebak-di-China,%20Kemenkes-Imbau-Publik-untuk-Waspada" target="_blank" class="hover:text-medical">Wabah Virus HMPV Merebak di China, Kemenkes Imbau Publik untuk Waspada</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Wabah Virus HMPV Merebak di China, Kemenkes Imbau Publik untuk Waspada</p>
-                <a href="https://www.kemkes.go.id/id/Wabah-Virus-HMPV-Merebak-di-China,%20Kemenkes-Imbau-Publik-untuk-Waspada" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span>
-                    <span>•</span>
-                    <span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://news.google.com/rss/articles/CBMicEFVX3lxTFBVRlpwel9vdjUzZHhacTNzbFNWZnFfYlhYZHFwM3FiZ2YzaUt5S3ctbG5hUm9GWUp0VkI5cl9XVE5fak1mdEk5X1dWZEV1UzdUelpXWjJLV01ubndMbm5wQ0JzaHhRTFJRWllQU2tnUHE?oc=5" target="_blank" class="hover:text-medical">Krisis Mental, Celah Baru Industri Nikotin - Prohealth.id</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini untuk masyarakat.</p>
-                <a href="https://news.google.com/rss/articles/CBMicEFVX3lxTFBVRlpwel9vdjUzZHhacTNzbFNWZnFfYlhYZHFwM3FiZ2YzaUt5S3ctbG5hUm9GWUp0VkI5cl9XVE5fak1mdEk5X1dWZEV1UzdUelpXWjJLV01ubndMbm5wQ0JzaHhRTFJRWllQU2tnUHE?oc=5" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 31 August 2026</span>
-                    <span>•</span>
-                    <span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxON1UtNnpJMndVV2ZTWFpNN1llRTctRVVtOWNZeUFtanhDVmZFZHNNZHhsYVJMWWhTNzBGOUM2MVRRLXVuWW1zeURWMVppaFd3dXNacXM5bEpsc1ZDWnNJbEc3OXE3OVJraUUyR052X1NEQ1lpQS12a25WOWljc3RIcUlzazFmNmd2WExYVmszN0E1bjVZYzhNSUctV2RuUW9uTG85MHE0bS1SeE5ubGc?oc=5" target="_blank" class="hover:text-medical">Kemenkes Minta Pemda Perkuat Komitmen Akselerasi Imunisasi 2026 - Media Center Riau</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini untuk masyarakat.</p>
-                <a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxON1UtNnpJMndVV2ZTWFpNN1llRTctRVVtOWNZeUFtanhDVmZFZHNNZHhsYVJMWWhTNzBGOUM2MVRRLXVuWW1zeURWMVppaFd3dXNacXM5bEpsc1ZDWnNJbEc3OXE3OVJraUUyR052X1NEQ1lpQS12a25WOWljc3RIcUlzazFmNmd2WExYVmszN0E1bjVZYzhNSUctV2RuUW9uTG85MHE0bS1SeE5ubGc?oc=5" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 26 August 2026</span>
-                    <span>•</span>
-                    <span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://news.google.com/rss/articles/CBMi4gFBVV95cUxNMVYzYjNkZFZMbTl4bFZIblgwWkNwalN0OEo3V0JDXzlhLWZUYmZPYmZUS0tMNlNHc3ZkZVdaLUZEbDdBVjJCRzlBcUIwTk5IZFhPZUctVHVXS1lNTWNJazVqZV9UM2JHbWgwMnRpaDEweExSMWdNWWZRMndfemVWbkR3Zy1wdFRfamxFY0JxQkNRdld4TXNja0FwZC1NbnctOXpvT1VPM0dOR0ZJd1FPNjF5NThZZ3RnNENDUkRVaHpEemxJazhta3JzTVVpZ2g0T2k5NGRqeXcweEU3NjlHWTVB0gHnAUFVX3lxTE9xNENfNWJFM0dNYnFHSTRsUGZrWHNfaXVua1hPSzZhS0dPcE92SDA3WE5CaFBlS2M2N1d4M0JETFlRNnRJT3lPbGZEeW8xWnZzZmthT3M3ZlY0TFBQUE9YTl90MnF0VlppMGQtczQxSTVhQUxJazFOY2dkeEprSEIzX1BPd21pVElBOWlOU3FSNGp6U2dRMnoxUjE5VFVEZUVyR0k4eV8yMUpGWlJQTC1xaDI4QUJTaHByR0NpMlIyZkJETlh6VlV6R3JyY0RPR29WX3o4Z25fSFlWaEJWQVp5RER2MUp0OA?oc=5" target="_blank" class="hover:text-medical">Beban Kesehatan Tembus Rp120 Triliun, PFI Serukan Penanganan Sistemik Karhutla di Indonesia - SINDOnews Nasional</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini untuk masyarakat.</p>
-                <a href="https://news.google.com/rss/articles/CBMi4gFBVV95cUxNMVYzYjNkZFZMbTl4bFZIblgwWkNwalN0OEo3V0JDXzlhLWZUYmZPYmZUS0tMNlNHc3ZkZVdaLUZEbDdBVjJCRzlBcUIwTk5IZFhPZUctVHVXS1lNTWNJazVqZV9UM2JHbWgwMnRpaDEweExSMWdNWWZRMndfemVWbkR3Zy1wdFRfamxFY0JxQkNRdld4TXNja0FwZC1NbnctOXpvT1VPM0dOR0ZJd1FPNjF5NThZZ3RnNENDUkRVaHpEemxJazhta3JzTVVpZ2g0T2k5NGRqeXcweEU3NjlHWTVB0gHnAUFVX3lxTE9xNENfNWJFM0dNYnFHSTRsUGZrWHNfaXVua1hPSzZhS0dPcE92SDA3WE5CaFBlS2M2N1d4M0JETFlRNnRJT3lPbGZEeW8xWnZzZmthT3M3ZlY0TFBQUE9YTl90MnF0VlppMGQtczQxSTVhQUxJazFOY2dkeEprSEIzX1BPd21pVElBOWlOU3FSNGp6U2dRMnoxUjE5VFVEZUVyR0k4eV8yMUpGWlJQTC1xaDI4QUJTaHByR0NpMlIyZkJETlh6VlV6R3JyY0RPR29WX3o4Z25fSFlWaEJWQVp5RER2MUp0OA?oc=5" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <img src="https://raw.githubusercontent.com/rezagnwn17-lang/news-idi-web/main/images/img-1787670487.jpg" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 25 August 2026</span>
-                    <span>•</span>
-                    <span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://ayosehat.kemkes.go.id/sering-menatap-layar--kenali-computer-vision-syndrome-dan-cara-mencegahnya-" target="_blank" class="hover:text-medical">Sering Menatap Layar? Kenali Computer Vision Syndrome Dan Cara Mencegahnya</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Computer Vision Syndrome atau sering juga disebut digital eye strain adalah kumpulan keluhan pada mata, penglihatan, leher dan bahu, yang muncul akibat penggunaan komputer, laptop, tablet, atau ponsel dalam waktu lama. Keluhan ini sering terjadi pada orang yang bekerja dengan layar digital setiap hari, terutama bila posisi kerja, pencahayaan, jarak pandang, atau kebiasaan istirahat mata kurang baik.</p>
-                <a href="https://ayosehat.kemkes.go.id/sering-menatap-layar--kenali-computer-vision-syndrome-dan-cara-mencegahnya-" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 25 August 2026</span>
-                    <span>•</span>
-                    <span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://idionline.org" target="_blank" class="hover:text-medical">PB IDI Luncurkan Panduan Etika Baru Pelayanan Medis Berbasis Telemedicine</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Langkah progresif PB IDI dalam memastikan keamanan data pasien serta menjaga standar mutu tinggi layanan kesehatan digital di seluruh Indonesia.</p>
-                <a href="https://idionline.org" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <!-- Bagian Gambar Preview -->
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <!-- Bagian Teks Bawah -->
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 25 August 2026</span>
-                    <span>•</span>
-                    <span>Google News</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://news.google.com/rss/articles/CBMi2wFBVV95cUxNYnY4bm5GdzFNNjdjWFBQZE5SU0N6MlFLT2dZYXB1SzhmaDFSOEs2WlhEbnU3VmEyNURLSllBX3NvZTZlRTBFMUNqWW8wVk5mZU9TVndvbG1ZZzhjREJMZ0tfTW55Y0g2bmRLNzR5bnFldnc4azVZYTZUcHlkeEljZENGYi0zdFM1dmVoODNqTW13Uk9heVh1bWVtOVM1ZHk5a3hsVHhFZERSX1htcFhwUFlRanhGQ25HYlJGUDMyelNxVk4yMU5BRzdteTBRTXNkeFJxa2FoeU50TUHSAeABQVVfeXFMTWVIWmR1LW53RkNfejhPY3RpS1hMbHJRWUplcEVVOXRBeWItYmFoaWFQWnVRMWw4b0pCaEpMQThEeHR4b2ZsMmtjN1Vqc19FMnEwdU1mX1p2VVlJUU5lYnhOMjBQcVBUdjV6MUZHdTNhbmR0RHdaYzE3cTl6MmJTR1czTnBfTFRsX2FlRGJJRjZrM0ZmUEhKRW1LU1JLLUVmWDNWMS1BOXRISUFDX2VRNzBuZDJ6MWxRcHBmSFJoOUlHWlpKaU5YaFFDZ0NZYjdRRzh3OWRSbTFxd2FmREc2cTU?oc=5" target="_blank" class="hover:text-medical">Indonesia-Vantara Luncurkan Kemitraan Besar untuk Kesehatan Satwa Liar dan Konservasi - SINDOnews Nasional</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini untuk masyarakat.</p>
-                <a href="https://news.google.com/rss/articles/CBMi2wFBVV95cUxNYnY4bm5GdzFNNjdjWFBQZE5SU0N6MlFLT2dZYXB1SzhmaDFSOEs2WlhEbnU3VmEyNURLSllBX3NvZTZlRTBFMUNqWW8wVk5mZU9TVndvbG1ZZzhjREJMZ0tfTW55Y0g2bmRLNzR5bnFldnc4azVZYTZUcHlkeEljZENGYi0zdFM1dmVoODNqTW13Uk9heVh1bWVtOVM1ZHk5a3hsVHhFZERSX1htcFhwUFlRanhGQ25HYlJGUDMyelNxVk4yMU5BRzdteTBRTXNkeFJxa2FoeU50TUHSAeABQVVfeXFMTWVIWmR1LW53RkNfejhPY3RpS1hMbHJRWUplcEVVOXRBeWItYmFoaWFQWnVRMWw4b0pCaEpMQThEeHR4b2ZsMmtjN1Vqc19FMnEwdU1mX1p2VVlJUU5lYnhOMjBQcVBUdjV6MUZHdTNhbmR0RHdaYzE3cTl6MmJTR1czTnBfTFRsX2FlRGJJRjZrM0ZmUEhKRW1LU1JLLUVmWDNWMS1BOXRISUFDX2VRNzBuZDJ6MWxRcHBmSFJoOUlHWlpKaU5YaFFDZ0NZYjdRRzh3OWRSbTFxd2FmREc2cTU?oc=5" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <!-- Bagian Gambar Preview -->
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <!-- Bagian Teks Bawah -->
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 25 August 2026</span>
-                    <span>•</span>
-                    <span>Google News</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://news.google.com/rss/articles/CBMi7wFBVV95cUxQMFVUem4ySVZmbGl0dDVpOW53aUZfcGk2VnlwU19GeUNYbWxzSTJ4eXVGX3ZITTZ4YWNVSnVvYWZxTHV0S21FNHJjWTFnUjFaY24zLXZRRHNaQ0RLc3BqMUQ0UnMzOFM4SE1kZXJVa2hFLVMzcjhCSzJ2amNXUVZZbnExOURwOE1IOGdmSnk1ZXBueEt5UlczTjRKNjVQZkhlYXNxWHJKdlZsS0tmTTVwa2k0eTliZjRoT3IyQ1I0NzA3VUNUdXA0aG81aDRMWWdLbmtJaXJ3TnZsYXk5OVBtVjB5MVBZNkZOejJiQ0wxMNIB8gFBVV95cUxNb1dhYzNUSzJiNzgtcFdvVDRZR3hpSDJYX296TFRHLVdoYUJtNGl0eHA0UmstcVY3T1hRc2FiODFBOE85Njg3VndKdk5pRWJnYXRCaDVGOVpzLUFwenBsRnZCblowZkpldWRJSDlydDRXU1pjVzJQTlViS0JBT2R1Smp0aUtVWmFUVG9ITjN1SzhKTm9pNWpHWUoteDFXUzNJLU1meDFRRXdoQTRGTFNEVzlyQjN0ZTF5dl9MYWtGcGJCbThTTXNkVXhBYUd5T25XeUhyVzdSc184c0ZUaW1kWXZmemJMaUhJYnZQM0cteGVqQQ?oc=5" target="_blank" class="hover:text-medical">Nilai Pendapatan Wisata Kesehatan Asal Indonesia di Malaysia Cetak Rekor RM2,2 Miliar, MHX Kembali Hadir di Yogyakarta - ANTARA News</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini untuk masyarakat.</p>
-                <a href="https://news.google.com/rss/articles/CBMi7wFBVV95cUxQMFVUem4ySVZmbGl0dDVpOW53aUZfcGk2VnlwU19GeUNYbWxzSTJ4eXVGX3ZITTZ4YWNVSnVvYWZxTHV0S21FNHJjWTFnUjFaY24zLXZRRHNaQ0RLc3BqMUQ0UnMzOFM4SE1kZXJVa2hFLVMzcjhCSzJ2amNXUVZZbnExOURwOE1IOGdmSnk1ZXBueEt5UlczTjRKNjVQZkhlYXNxWHJKdlZsS0tmTTVwa2k0eTliZjRoT3IyQ1I0NzA3VUNUdXA0aG81aDRMWWdLbmtJaXJ3TnZsYXk5OVBtVjB5MVBZNkZOejJiQ0wxMNIB8gFBVV95cUxNb1dhYzNUSzJiNzgtcFdvVDRZR3hpSDJYX296TFRHLVdoYUJtNGl0eHA0UmstcVY3T1hRc2FiODFBOE85Njg3VndKdk5pRWJnYXRCaDVGOVpzLUFwenBsRnZCblowZkpldWRJSDlydDRXU1pjVzJQTlViS0JBT2R1Smp0aUtVWmFUVG9ITjN1SzhKTm9pNWpHWUoteDFXUzNJLU1meDFRRXdoQTRGTFNEVzlyQjN0ZTF5dl9MYWtGcGJCbThTTXNkVXhBYUd5T25XeUhyVzdSc184c0ZUaW1kWXZmemJMaUhJYnZQM0cteGVqQQ?oc=5" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-40 bg-medical-light p-6 flex flex-col justify-between relative">
-                <span class="bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full w-fit">Sumber: Berita Terpercaya</span>
-                <h3 class="font-bold text-lg text-medical-dark line-clamp-2">Artikel Terkini</h3>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 25 August 2026</span>
-                    <span>•</span>
-                    <span>Kategori: Medis</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="https://news.google.com/rss/articles/CBMi2wFBVV95cUxNYnY4bm5GdzFNNjdjWFBQZE5SU0N6MlFLT2dZYXB1SzhmaDFSOEs2WlhEbnU3VmEyNURLSllBX3NvZTZlRTBFMUNqWW8wVk5mZU9TVndvbG1ZZzhjREJMZ0tfTW55Y0g2bmRLNzR5bnFldnc4azVZYTZUcHlkeEljZENGYi0zdFM1dmVoODNqTW13Uk9heVh1bWVtOVM1ZHk5a3hsVHhFZERSX1htcFhwUFlRanhGQ25HYlJGUDMyelNxVk4yMU5BRzdteTBRTXNkeFJxa2FoeU50TUHSAeABQVVfeXFMTWVIWmR1LW53RkNfejhPY3RpS1hMbHJRWUplcEVVOXRBeWItYmFoaWFQWnVRMWw4b0pCaEpMQThEeHR4b2ZsMmtjN1Vqc19FMnEwdU1mX1p2VVlJUU5lYnhOMjBQcVBUdjV6MUZHdTNhbmR0RHdaYzE3cTl6MmJTR1czTnBfTFRsX2FlRGJJRjZrM0ZmUEhKRW1LU1JLLUVmWDNWMS1BOXRISUFDX2VRNzBuZDJ6MWxRcHBmSFJoOUlHWlpKaU5YaFFDZ0NZYjdRRzh3OWRSbTFxd2FmREc2cTU?oc=5" target="_blank" class="hover:text-medical">Indonesia-Vantara Luncurkan Kemitraan Besar untuk Kesehatan Satwa Liar dan Konservasi - SINDOnews Nasional</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini.</p>
-                <a href="https://news.google.com/rss/articles/CBMi2wFBVV95cUxNYnY4bm5GdzFNNjdjWFBQZE5SU0N6MlFLT2dZYXB1SzhmaDFSOEs2WlhEbnU3VmEyNURLSllBX3NvZTZlRTBFMUNqWW8wVk5mZU9TVndvbG1ZZzhjREJMZ0tfTW55Y0g2bmRLNzR5bnFldnc4azVZYTZUcHlkeEljZENGYi0zdFM1dmVoODNqTW13Uk9heVh1bWVtOVM1ZHk5a3hsVHhFZERSX1htcFhwUFlRanhGQ25HYlJGUDMyelNxVk4yMU5BRzdteTBRTXNkeFJxa2FoeU50TUHSAeABQVVfeXFMTWVIWmR1LW53RkNfejhPY3RpS1hMbHJRWUplcEVVOXRBeWItYmFoaWFQWnVRMWw4b0pCaEpMQThEeHR4b2ZsMmtjN1Vqc19FMnEwdU1mX1p2VVlJUU5lYnhOMjBQcVBUdjV6MUZHdTNhbmR0RHdaYzE3cTl6MmJTR1czTnBfTFRsX2FlRGJJRjZrM0ZmUEhKRW1LU1JLLUVmWDNWMS1BOXRISUFDX2VRNzBuZDJ6MWxRcHBmSFJoOUlHWlpKaU5YaFFDZ0NZYjdRRzh3OWRSbTFxd2FmREc2cTU?oc=5" target="_blank" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-        
-    </div>
-</section>
-
-</main>
-
-  <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-        
-        <!-- Kolom 1: Kontak -->
-        <div>
-          <div class="flex items-center gap-2 mb-4">
-            <img src="logo-idi-denpasar.png" alt="Logo IDI Denpasar" class="h-8 w-auto" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2232%22 height=%2232%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2215%22 fill=%22%230e5e6f%22/%3E%3Ctext x=%2216%22 y=%2221%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2214%22%3EIDI%3C/text%3E%3C/svg%3E';">
-            <span class="font-bold text-medical text-lg">IDI Denpasar</span>
-          </div>
-          <p class="text-sm text-gray-600 leading-relaxed mb-3">Ikatan Dokter Indonesia Cabang Denpasar</p>
-          <ul class="space-y-2 text-sm text-gray-600">
-            <li class="flex items-start gap-2"><span class="mt-0.5">📍</span> Pertokoan Grand Sudirman Blok C-36 Jl. PB Sudirman Denpasar</li>
-            <li class="flex items-center gap-2"><span>📞</span> 087751444330</li>
-            <li class="flex items-center gap-2"><span>✉️</span> ididenpasar@gmail.com</li>
-          </ul>
+        <!-- JANGAN UBAH BARIS KODE GRID DI BAWAH INI KARENA DIPAKAI OLEH BOT TELEGRAM -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <!-- Berita baru akan otomatis muncul di sini oleh Bot -->
         </div>
 
-        <!-- Kolom 2: Tautan & Sosial Media -->
-        <div>
-          <h4 class="font-semibold text-medical mb-4 text-base">Tautan Cepat</h4>
-          <ul class="space-y-2 text-sm text-gray-600">
-            <li><a href="#" class="hover:text-medical transition">Edukasi Kesehatan</a></li>
-            <li><a href="#" class="hover:text-medical transition">Info Kemenkes RI</a></li>
-            <li><a href="#" class="hover:text-medical transition">Kegiatan IDI Denpasar</a></li>
-            <li><a href="#" class="hover:text-medical transition">Kontak & Pengaduan</a></li>
-          </ul>
-          <div class="mt-6">
-            <h4 class="font-semibold text-medical mb-2 text-sm">Media Sosial</h4>
-            <div class="flex space-x-3">
-              <a href="#" class="text-gray-500 hover:text-medical transition" aria-label="Facebook">🔵 Facebook</a>
-              <a href="#" class="text-gray-500 hover:text-medical transition" aria-label="Instagram">📷 Instagram</a>
-              <a href="#" class="text-gray-500 hover:text-medical transition" aria-label="Twitter">🐦 Twitter</a>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- FOOTER KONTAK IDI DENPASAR TERBARU -->
+    <!-- ========================================== -->
+    <footer class="bg-white border-t border-slate-200 mt-8 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
+            <!-- Info IDI -->
+            <div class="flex-1 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start space-x-3 mb-5">
+                    <img src="logo.png" alt="Logo IDI" class="h-10 w-auto object-contain">
+                    <h2 class="text-xl font-bold text-medical tracking-tight">IDI Cabang Denpasar</h2>
+                </div>
+                <div class="space-y-3">
+                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start">
+                        <span class="mr-3 text-lg">📍</span> Pertokoan Grand Sudirman Blok C-36 Jl. PB Sudirman Denpasar
+                    </p>
+                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start">
+                        <span class="mr-3 text-lg">📞</span> 087751444330
+                    </p>
+                    <p class="text-slate-600 text-sm flex items-center justify-center md:justify-start">
+                        <span class="mr-3 text-lg">✉️</span> ididenpasar@gmail.com
+                    </p>
+                </div>
             </div>
-          </div>
+            
+            <!-- Copyright -->
+            <div class="flex-1 text-center md:text-right text-slate-400 text-sm flex flex-col md:justify-end h-full mt-4 md:mt-10">
+                <p>&copy; 2026 Ikatan Dokter Indonesia Cabang Denpasar.</p>
+                <p>All rights reserved.</p>
+            </div>
         </div>
-
-        <!-- Kolom 3: Disclaimer Medis -->
-        <div class="md:col-span-1">
-          <h4 class="font-semibold text-medical mb-3 text-base flex items-center gap-1"><span>⚠️</span> Disclaimer Medis</h4>
-          <p class="text-xs text-gray-500 leading-relaxed bg-gray-50 p-4 rounded-lg border border-gray-100">
-            Portal ini dikelola oleh IDI Cabang Denpasar. Artikel diproduksi dengan bantuan AI dari sumber faktual (Kemenkes, WHO) untuk tujuan edukasi. Bukan pengganti diagnosis dokter.
-          </p>
-          <p class="text-xs text-gray-400 mt-4">
-            © 2026 IDI Cabang Denpasar • Seluruh hak cipta dilindungi.
-          </p>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- JavaScript kecil untuk toggle mobile menu -->
-  <script>
-    (function() {
-      const toggleBtn = document.getElementById('mobile-menu-toggle');
-      const mobileMenu = document.getElementById('mobile-menu');
-      if (toggleBtn && mobileMenu) {
-        toggleBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          mobileMenu.classList.toggle('hidden');
-        });
-        // Tutup menu jika klik di luar
-        document.addEventListener('click', function(event) {
-          if (!toggleBtn.contains(event.target) && !mobileMenu.contains(event.target)) {
-            mobileMenu.classList.add('hidden');
-          }
-        });
-      }
-    })();
-  </script>
-
+    </footer>
 </body>
 </html>
-
-<ul>
-    <li><a href="berita-1787659305.html" style="color: #004b87; font-size: 18px; text-decoration: none;">Pasar wisata kesehatan Indonesia ke Malaysia melonjak 24% - idnfinancials.com</a> <span style="color: gray; font-size: 12px;">(2026-08-25)</span></li>
-
-</ul>
