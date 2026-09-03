@@ -22,25 +22,61 @@
 </head>
 <body class="bg-slate-50 antialiased text-slate-800 flex flex-col min-h-screen">
     
-    <!-- HEADER -->
-    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+    <!-- HEADER & MENU BAR -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center relative">
+            
+            <!-- Logo & Judul -->
             <div class="flex items-center space-x-3">
                 <img src="logo-idi.png" alt="Logo IDI" class="h-10 w-auto object-contain">
                 <h1 class="text-xl md:text-2xl font-bold text-medical tracking-tight">IDI Cabang Denpasar</h1>
             </div>
-            <button class="text-slate-600 hover:text-medical focus:outline-none md:hidden">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            
+            <!-- Tombol Garis Tiga (Menu Bar Toggle) -->
+            <button id="menu-btn" class="text-slate-600 hover:text-medical focus:outline-none p-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
             </button>
+
+            <!-- Dropdown Menu Bar (Muncul saat tombol garis tiga diklik) -->
+            <div id="menu-dropdown" class="hidden absolute top-full right-4 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-3 px-2 z-50">
+                <a href="https://sistem.ididenpasar.org/admin/auth/login" class="flex items-center space-x-3 w-full px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-medical hover:text-white rounded-xl transition duration-200">
+                    <span>🔐</span>
+                    <span>Login Admin</span>
+                </a>
+                <a href="https://ididenpasar.org/inisialisasi" class="flex items-center space-x-3 w-full px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-medical hover:text-white rounded-xl transition duration-200">
+                    <span>⚙️</span>
+                    <span>Inisialisasi Anggota</span>
+                </a>
+            </div>
+
         </div>
     </header>
+
+    <!-- Script sederhana untuk membuka/menutup menu dropdown -->
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const menuDropdown = document.getElementById('menu-dropdown');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuDropdown.classList.toggle('hidden');
+        });
+
+        // Tutup menu jika mengklik di luar area menu
+        window.addEventListener('click', () => {
+            if (!menuDropdown.classList.contains('hidden')) {
+                menuDropdown.classList.add('hidden');
+            }
+        });
+    </script>
 
     <!-- KONTEN UTAMA -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex-grow w-full">
 
         <!-- TOMBOL LOGIN, DAFTAR & REKOMENDASI -->
         <div class="mb-12">
-            <!-- Container ini otomatis membagi 3 kolom di layar besar karena ada 3 elemen flex-1 -->
             <div class="flex flex-col gap-10 md:flex-row md:gap-8 bg-white p-6 md:p-10 rounded-3xl border border-slate-100 shadow-sm">
                 
                 <!-- Kotak 1: Inisialisasi -->
@@ -62,20 +98,19 @@
                         <p class="text-slate-600 font-medium mb-1">Anda belum terdaftar sebagai anggota IDI Denpasar?</p>
                         <p class="text-slate-500 text-sm mb-6 leading-relaxed">Silahkan mengisi formulir pendaftaran</p>
                     </div>
-                    <a href="2024-reg.ididenpasar.org.s3-website-ap-southeast-1.amazonaws.com" class="block w-full text-center bg-[#4a9c59] hover:bg-[#3d834a] text-white font-bold text-sm py-4 px-4 rounded-xl transition duration-300 shadow-md">
+                    <a href="website-ap-southeast-1.amazonaws.com" class="block w-full text-center bg-[#4a9c59] hover:bg-[#3d834a] text-white font-bold text-sm py-4 px-4 rounded-xl transition duration-300 shadow-md">
                         KLIK DAFTAR
                     </a>
                 </div>
 
-                <!-- Kotak 3 (Baru): Rekomendasi ACC -->
+                <!-- Kotak 3: Rekomendasi ACC -->
                 <div class="flex-1 flex flex-col justify-between mt-4 md:mt-0 border-t md:border-t-0 md:border-l border-slate-100 pt-8 md:pt-0 md:pl-8">
                     <div>
                         <h2 class="text-2xl md:text-3xl font-medium text-[#4a9c59] mb-4 tracking-tight">Rekomendasi Pengajuan<br>ACC dari IDI cabang</h2>
                         <p class="text-slate-600 font-medium mb-1">Bukan anggota IDI Denpasar?</p>
                         <p class="text-slate-500 text-sm mb-6 leading-relaxed">Dan ingin mendapatkan surat keterangan Rekomendasi ACC dari IDI cabang Denpasar ? Isi formulir pengajuan</p>
                     </div>
-                    <!-- Silakan ganti '#' dengan link form yang sebenarnya -->
-                    <a href="https://ididenpasar.org/permohonan/1/Permohonan%20Rekomendasi%20ACC%20dari%20IDI%20Cabang" target="_blank" class="block w-full text-center bg-[#4a9c59] hover:bg-[#3d834a] text-white font-bold text-sm py-4 px-4 rounded-xl transition duration-300 shadow-md uppercase">
+                    <a href="#" target="_blank" class="block w-full text-center bg-[#4a9c59] hover:bg-[#3d834a] text-white font-bold text-sm py-4 px-4 rounded-xl transition duration-300 shadow-md uppercase">
                         Isi Formulir pengajuan
                     </a>
                 </div>
@@ -87,9 +122,6 @@
         <h2 class="text-2xl md:text-3xl font-bold text-medical-dark mb-6">Artikel Terkini</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
     
-        
-        
-    
         <article data-file="rutan-rantau-gandeng-yayasan-kanker-indonesia-beri-edukasi-kesehatan-petugas-dan-warga-binaan-direktorat-jenderal-pemasyarakatan.html" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
             <div class="h-48 bg-gray-200 relative overflow-hidden group">
                 <a href="rutan-rantau-gandeng-yayasan-kanker-indonesia-beri-edukasi-kesehatan-petugas-dan-warga-binaan-direktorat-jenderal-pemasyarakatan.html">
@@ -111,35 +143,6 @@
             </div>
         </article>
         
-    
-        <article data-file="rutan-rantau-gandeng-yayasan-kanker-indonesia-beri-edukasi-kesehatan-petugas-dan-warga-binaan-direktorat-jenderal-pemasyarakatan.html" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="rutan-rantau-gandeng-yayasan-kanker-indonesia-beri-edukasi-kesehatan-petugas-dan-warga-binaan-direktorat-jenderal-pemasyarakatan.html">
-                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 02 September 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="rutan-rantau-gandeng-yayasan-kanker-indonesia-beri-edukasi-kesehatan-petugas-dan-warga-binaan-direktorat-jenderal-pemasyarakatan.html" class="hover:text-medical">Rutan Rantau Gandeng Yayasan Kanker Indonesia Beri Edukasi Kesehatan Petugas dan Warga Binaan - Direktorat Jenderal Pemasyarakatan</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini.</p>
-                <a href="rutan-rantau-gandeng-yayasan-kanker-indonesia-beri-edukasi-kesehatan-petugas-dan-warga-binaan-direktorat-jenderal-pemasyarakatan.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        
-        
-    
-        
-        
-    
         <article data-file="waspadai-tanda-ginjal-rusak-bisa-terlihat-dari-perubahan-urine.html" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
             <div class="h-48 bg-gray-200 relative overflow-hidden group">
                 <a href="waspadai-tanda-ginjal-rusak-bisa-terlihat-dari-perubahan-urine.html">
@@ -155,16 +158,13 @@
                     <a href="waspadai-tanda-ginjal-rusak-bisa-terlihat-dari-perubahan-urine.html" class="hover:text-medical">Waspadai Tanda Ginjal Rusak, Bisa Terlihat dari Perubahan Urine</a>
                 </h3>
                 <p class="text-sm text-gray-600 leading-relaxed flex-1">Jakarta - Penyakit ginjal jarang menimbulkan gejala pada tahap awal. Gejala biasanya baru muncul ketika penyakit sudah memasuki tahap yang cukup lanjut.
-Salah satu tanda awal penyakit ginjal dapat terlihat dari kadar kreatinin atau urea yang tidak normal dalam darah. Kondisi ini dapat menyebabkan uremia, yaitu penumpukan zat sisa metabolisme dalam darah akibat fungsi ginjal yang menurun.
-
-Pemeriksaan darah, seperti basic metabolic panel (BMP), sering dilakukan sebagai bagian dari pemeriksaan kesehatan rutin. Tes ini dapat membantu tenaga kesehatan mendeteksi kadar sejumlah zat dalam darah, termasuk yang berkaitan dengan fungsi ginjal.</p>
+Salah satu tanda awal penyakit ginjal dapat terlihat dari kadar kreatinin atau urea yang tidak normal dalam darah. Kondisi ini dapat menyebabkan uremia, yaitu penumpukan zat sisa metabolisme dalam darah akibat fungsi ginjal yang menurun.</p>
                 <a href="waspadai-tanda-ginjal-rusak-bisa-terlihat-dari-perubahan-urine.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
                     Baca selengkapnya <span class="ml-1">→</span>
                 </a>
             </div>
         </article>
         
-    
         <article data-file="infografis-pemerintah-buka-25-prodi-dokter-ppds-hospital-based-ini-daftarnya.html" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
             <div class="h-48 bg-gray-200 relative overflow-hidden group">
                 <a href="infografis-pemerintah-buka-25-prodi-dokter-ppds-hospital-based-ini-daftarnya.html">
@@ -179,31 +179,8 @@ Pemeriksaan darah, seperti basic metabolic panel (BMP), sering dilakukan sebagai
                 <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
                     <a href="infografis-pemerintah-buka-25-prodi-dokter-ppds-hospital-based-ini-daftarnya.html" class="hover:text-medical">Infografis: Pemerintah Buka 25 Prodi Dokter PPDS Hospital Based, Ini daftarnya</a>
                 </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Jakarta - Pemerintah menerbitkan izin operasional bagi 25 program studi (prodi) baru Program Pendidikan Dokter Spesialis (PPDS) berbasis rumah sakit (hospital-based). Kebijakan ini menjadi salah satu bentuk afirmasi bagi dokter yang bertugas di daerah tertinggal, terdepan, dan terluar (3T).
-Adapun program PPDS hospital-based, atau PPDS yang diselenggarakan di Rumah Sakit Pendidikan sebagai Penyelenggara Utama (RSPPU), merupakan langkah pemerintah untuk mengatasi kekurangan dokter spesialis di Indonesia yang mencapai sekitar 65.000 orang sekaligus memperluas pemerataan akses layanan kesehatan hingga ke daerah pelosok</p>
+                <p class="text-sm text-gray-600 leading-relaxed flex-1">Jakarta - Pemerintah menerbitkan izin operasional bagi 25 program studi (prodi) baru Program Pendidikan Dokter Spesialis (PPDS) berbasis rumah sakit (hospital-based)...</p>
                 <a href="infografis-pemerintah-buka-25-prodi-dokter-ppds-hospital-based-ini-daftarnya.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
-                    Baca selengkapnya <span class="ml-1">→</span>
-                </a>
-            </div>
-        </article>
-        
-    
-        <article data-file="program-cek-kesehatan-gratis-mitra-pengemudi-grab.html" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
-            <div class="h-48 bg-gray-200 relative overflow-hidden group">
-                <a href="program-cek-kesehatan-gratis-mitra-pengemudi-grab.html">
-                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                </a>
-                <span class="absolute top-4 left-4 bg-white/90 text-medical text-xs font-semibold px-3 py-1 rounded-full shadow">Berita Terkini</span>
-            </div>
-            <div class="p-6 flex flex-col flex-1">
-                <div class="flex items-center text-xs text-gray-500 mb-3 space-x-2">
-                    <span>📅 02 September 2026</span><span>•</span><span>Redaksi IDI</span>
-                </div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2 leading-snug">
-                    <a href="program-cek-kesehatan-gratis-mitra-pengemudi-grab.html" class="hover:text-medical">Program Cek Kesehatan Gratis Mitra Pengemudi - Grab</a>
-                </h3>
-                <p class="text-sm text-gray-600 leading-relaxed flex-1">Liputan dan informasi penting seputar dunia kesehatan terkini.</p>
-                <a href="program-cek-kesehatan-gratis-mitra-pengemudi-grab.html" class="mt-4 inline-flex items-center text-sm font-semibold text-medical hover:text-accent-green transition">
                     Baca selengkapnya <span class="ml-1">→</span>
                 </a>
             </div>
@@ -237,19 +214,16 @@ Adapun program PPDS hospital-based, atau PPDS yang diselenggarakan di Rumah Saki
                 </div>
             </div>
 
-            <!-- Bagian Sosial Media (Instagram, Telegram, Facebook) -->
+            <!-- Bagian Sosial Media -->
             <div class="flex-1 text-center md:text-left">
                 <h3 class="text-base font-bold text-slate-900 mb-4">Media Sosial Kami</h3>
                 <div class="flex flex-col space-y-3">
-                    <!-- Instagram -->
                     <a href="https://instagram.com/ididenpasar" target="_blank" class="text-slate-600 hover:text-medical text-sm flex items-center justify-center md:justify-start transition duration-200">
                         <span class="mr-3 text-lg">📷</span> Instagram: @ididenpasar
                     </a>
-                    <!-- Telegram -->
                     <a href="https://t.me/ididenpasar" target="_blank" class="text-slate-600 hover:text-medical text-sm flex items-center justify-center md:justify-start transition duration-200">
                         <span class="mr-3 text-lg">✈️</span> Telegram Channel / Group
                     </a>
-                    <!-- Facebook -->
                     <a href="https://facebook.com/ididenpasar" target="_blank" class="text-slate-600 hover:text-medical text-sm flex items-center justify-center md:justify-start transition duration-200">
                         <span class="mr-3 text-lg">📘</span> Facebook Page IDI Denpasar
                     </a>
