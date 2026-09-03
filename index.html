@@ -38,9 +38,12 @@
     <!-- KONTEN UTAMA -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex-grow w-full">
 
-        <!-- TOMBOL LOGIN & DAFTAR -->
+        <!-- TOMBOL LOGIN, DAFTAR & REKOMENDASI -->
         <div class="mb-12">
+            <!-- Container ini otomatis membagi 3 kolom di layar besar karena ada 3 elemen flex-1 -->
             <div class="flex flex-col gap-10 md:flex-row md:gap-8 bg-white p-6 md:p-10 rounded-3xl border border-slate-100 shadow-sm">
+                
+                <!-- Kotak 1: Inisialisasi -->
                 <div class="flex-1 flex flex-col justify-between">
                     <div>
                         <h2 class="text-2xl md:text-3xl font-medium text-[#4a9c59] mb-4 tracking-tight">Lengkapi Identitas<br>Anda</h2>
@@ -52,6 +55,7 @@
                     </a>
                 </div>
 
+                <!-- Kotak 2: Daftar -->
                 <div class="flex-1 flex flex-col justify-between mt-4 md:mt-0">
                     <div>
                         <h2 class="text-2xl md:text-3xl font-medium text-[#4a9c59] mb-4 tracking-tight">Pendaftaran Anggota<br>Baru</h2>
@@ -62,6 +66,20 @@
                         KLIK DAFTAR
                     </a>
                 </div>
+
+                <!-- Kotak 3 (Baru): Rekomendasi ACC -->
+                <div class="flex-1 flex flex-col justify-between mt-4 md:mt-0 border-t md:border-t-0 md:border-l border-slate-100 pt-8 md:pt-0 md:pl-8">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-medium text-[#4a9c59] mb-4 tracking-tight">Rekomendasi Pengajuan<br>ACC dari IDI cabang</h2>
+                        <p class="text-slate-600 font-medium mb-1">Bukan anggota IDI Denpasar?</p>
+                        <p class="text-slate-500 text-sm mb-6 leading-relaxed">Dan ingin mendapatkan surat keterangan Rekomendasi ACC dari IDI cabang Denpasar ? Isi formulir pengajuan</p>
+                    </div>
+                    <!-- Silakan ganti '#' dengan link form yang sebenarnya -->
+                    <a href="https://ididenpasar.org/permohonan/1/Permohonan%20Rekomendasi%20ACC%20dari%20IDI%20Cabang" target="_blank" class="block w-full text-center bg-[#4a9c59] hover:bg-[#3d834a] text-white font-bold text-sm py-4 px-4 rounded-xl transition duration-300 shadow-md uppercase">
+                        Isi Formulir pengajuan
+                    </a>
+                </div>
+
             </div>
         </div>
 
